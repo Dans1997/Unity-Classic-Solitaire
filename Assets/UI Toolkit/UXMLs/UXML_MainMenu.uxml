@@ -1,0 +1,9 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <ui:VisualElement style="flex-grow: 1; justify-content: center; align-self: auto; align-items: center; -unity-font-definition: url(&quot;project://database/Assets/Fonts/Bebas_Neue/BebasNeue-Regular%20SDF%201.asset?fileID=11400000&amp;guid=fe23304b411887442ac1189e2d2cd300&amp;type=2#BebasNeue-Regular SDF 1&quot;); font-size: 72px; -unity-text-align: middle-center; background-color: rgb(0, 0, 0); transition-duration: 0.5s; transition-timing-function: ease-in; transition-property: opacity;">
+        <ui:Label tabindex="-1" text="Good Games" parse-escape-sequences="true" display-tooltip-when-elided="true" style="width: 100%; font-size: 180px; -unity-text-align: middle-center; -unity-font-style: normal; color: rgb(255, 255, 255);" />
+        <ui:VisualElement style="height: 10%;" />
+        <ui:Button text="Play" parse-escape-sequences="true" display-tooltip-when-elided="true" name="play-button" style="width: 25%; height: 5%; -unity-font: url(&quot;project://database/Assets/Fonts/Roboto/Roboto-Black.ttf?fileID=12800000&amp;guid=bc7692b51c643524f9dfc4c76dae394f&amp;type=3#Roboto-Black&quot;); -unity-text-align: middle-center;" />
+        <ui:Button text="Options" parse-escape-sequences="true" display-tooltip-when-elided="true" name="options-button" style="width: 25%; height: 5%;" />
+        <ui:Button text="Exit" parse-escape-sequences="true" display-tooltip-when-elided="true" name="exit-button" style="width: 25%; height: 5%;" />
+    </ui:VisualElement>
+</ui:UXML>

@@ -1,0 +1,5 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <ui:VisualElement style="flex-grow: 1; justify-content: center; align-self: auto; align-items: center; -unity-font-definition: url(&quot;project://database/Assets/Fonts/Bebas_Neue/BebasNeue-Regular%20SDF%201.asset?fileID=11400000&amp;guid=fe23304b411887442ac1189e2d2cd300&amp;type=2#BebasNeue-Regular SDF 1&quot;); font-size: 72px; -unity-text-align: middle-center; background-color: rgb(0, 0, 0); transition-duration: 0.5s; transition-timing-function: ease-in; transition-property: opacity;">
+        <ui:Label tabindex="-1" text="Now loading..." parse-escape-sequences="true" display-tooltip-when-elided="true" style="width: 100%; font-size: 180px; -unity-text-align: middle-center; -unity-font-style: normal; color: rgb(255, 255, 255);" />
+    </ui:VisualElement>
+</ui:UXML>
