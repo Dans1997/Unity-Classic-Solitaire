@@ -17,6 +17,11 @@ MonoBehaviour:
     m_SerializedData: []
   m_GUID: f8fbc10ca11e4514d82608656cb121e3
   m_SerializeEntries:
+  - m_GUID: 1fe0a0e8a34b8ed45bc3f9ba4b1b161c
+    m_Address: ClassicSolitaireScreenPrefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 36772d3b8f088934b9632402a80f0102
     m_Address: MainMenuScreenPrefab
     m_ReadOnly: 0

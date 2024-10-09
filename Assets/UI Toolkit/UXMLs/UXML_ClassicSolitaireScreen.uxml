@@ -1,0 +1,30 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI%20Toolkit/USSs/ClassicSolitaireScreen.uss?fileID=7433441132597879392&amp;guid=24ede0bcbd1b08246998ac1aa6d62254&amp;type=3#ClassicSolitaireScreen" />
+    <ui:VisualElement class="background column">
+        <ui:VisualElement class="top-container">
+            <ui:VisualElement class="analytics-container row" style="flex-grow: 1;">
+                <ui:VisualElement class="analytics-item row" style="flex-grow: 1;">
+                    <ui:Label tabindex="-1" text="Score: " parse-escape-sequences="true" display-tooltip-when-elided="true" class="analytics-label-title" />
+                    <ui:Label tabindex="-1" text="999999999" parse-escape-sequences="true" display-tooltip-when-elided="true" name="score-label" />
+                </ui:VisualElement>
+                <ui:VisualElement class="analytics-item row" style="flex-grow: 1;">
+                    <ui:Label tabindex="-1" text="Time: " parse-escape-sequences="true" display-tooltip-when-elided="true" class="analytics-label-title" />
+                    <ui:Label tabindex="-1" text="999999999" parse-escape-sequences="true" display-tooltip-when-elided="true" name="time-label" />
+                </ui:VisualElement>
+                <ui:VisualElement class="analytics-item row" style="flex-grow: 1;">
+                    <ui:Label tabindex="-1" text="Moves: " parse-escape-sequences="true" display-tooltip-when-elided="true" class="analytics-label-title" />
+                    <ui:Label tabindex="-1" text="999999999" parse-escape-sequences="true" display-tooltip-when-elided="true" name="moves-label" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="card-container" class="middle-container" />
+        <ui:VisualElement class="bottom-container">
+            <ui:VisualElement class="buttons-container row" style="flex-grow: 1;">
+                <ui:Button text="Settings" parse-escape-sequences="true" display-tooltip-when-elided="true" name="settings-button" class="gameplay-button" />
+                <ui:Button text="Exit" parse-escape-sequences="true" display-tooltip-when-elided="true" name="exit-button" class="gameplay-button" />
+                <ui:Button text="Pause" parse-escape-sequences="true" display-tooltip-when-elided="true" name="pause-button" class="gameplay-button" />
+                <ui:Button text="Undo" parse-escape-sequences="true" display-tooltip-when-elided="true" name="undo-button" class="gameplay-button" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

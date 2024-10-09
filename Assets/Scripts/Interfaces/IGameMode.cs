@@ -1,8 +1,10 @@
+using System.Collections;
+
 namespace Interfaces
 {
     public interface IGameMode
     {
-        void InitializeGame();
-        void UndoLastMove();
+        IEnumerator InitializeGame();
+        IEnumerator RunGame();
     }
 }

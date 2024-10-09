@@ -1,0 +1,92 @@
+:root {
+    --margin: 5%;
+    --font-def: url("project://database/Assets/Resources/Fonts/Bebas_Neue/BebasNeue-Regular.ttf?fileID=12800000&guid=21670a091c54d6545be7c3e5a835d310&type=3#BebasNeue-Regular");
+    --font-color: white;
+    --font-border-width: 0;
+}
+
+.unity-button {
+    margin: 0;
+    padding: 0;
+    border-width: 0;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.unity-text-element {
+    -unity-font-definition: var(--font-def);
+    -unity-text-outline: var(--font-border-width) black;
+    -unity-text-align: middle-center;
+    text-shadow: 15px 10px 0 black;
+    color: var(--font-color);
+    margin: 0;
+    padding: 0;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    align-items: center;
+    flex: 1;
+}
+
+.background {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: green;
+}
+
+.top-container {
+    flex: 10%;
+    width: 100%;
+}
+
+.analytics-container {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.analytics-item {
+    flex: 1;
+    height: 100%;
+    font-size: 50px;
+}
+
+.analytics-label-title {
+    color: yellow;
+}
+
+.analytics-label-value {
+    
+}
+
+.middle-container {
+    flex: 80%;
+    width: 100%;
+    padding: 5%;
+}
+
+.bottom-container {
+    flex: 10%;
+    width: 100%;
+}
+
+.buttons-container {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.gameplay-button {
+    flex: 1;
+    height: 100%;
+    font-size: 60px;
+    -unity-font-definition: var(--font-def);
+}

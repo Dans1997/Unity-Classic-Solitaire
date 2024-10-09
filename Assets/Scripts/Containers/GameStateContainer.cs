@@ -1,24 +1,81 @@
+using System;
+using System.Collections;
+using Games.Modes;
 using Interfaces;
+using Scenes;
+using Screens;
+using UnityEngine;
+using UnityEngine.AddressableAssets;
+using Utils;
 
 namespace Containers
 {
-    public class GameStateContainer
+    public class GameStateContainer : MonoBehaviour
     {
-        private readonly IGameMode gameMode;
+        private IScreen loadingScreen;
+        private IScreen mainMenuScreen;
+        private SceneLoader sceneLoader;
 
-        public GameStateContainer(IGameMode gameMode)
+        private IEnumerator Start()
         {
-            this.gameMode = gameMode;
+            yield return CreateLoadingScreen();
+            yield return CreateMainMenuScreen();
+            yield return loadingScreen.Hide();
+            
+            sceneLoader = new SceneLoader(loadingScreen);
+        }
+        
+        private IEnumerator CreateLoadingScreen()
+        {
+            var handle = Addressables.InstantiateAsync(Constants.LoadingScreenPrefabKey);
+            yield return handle;
+            loadingScreen = handle.Result.GetComponent<IScreen>();
+        }
+        
+        private IEnumerator CreateMainMenuScreen()
+        {
+            var handle = Addressables.InstantiateAsync(Constants.MainMenuScreenPrefabKey);
+            yield return handle;
+            
+            var mainMenu = handle.Result.GetComponent<MainMenuScreen>();
+            mainMenu.PlayButtonClicked += OnPlayButtonClicked;
+            mainMenu.OptionsButtonClicked += OnOptionsButtonClicked;
+            mainMenu.ExitButtonClicked += OnExitButtonClicked;
+            mainMenuScreen = mainMenu;
+
+            yield return mainMenuScreen.Show();
         }
 
-        public void StartGame()
+        private void OnPlayButtonClicked()
         {
-            gameMode?.InitializeGame();
+            StartCoroutine(LoadGameMode(GameMode.ClassicSolitaireMode));
         }
 
-        public void UndoMove()
+        private void OnOptionsButtonClicked()
         {
-            gameMode?.UndoLastMove();
+            Debug.Log("Options");
+        }
+
+        private void OnExitButtonClicked()
+        {
+            Application.Quit();
+        }
+
+        private IEnumerator LoadGameMode(GameMode gameMode)
+        {
+            yield return mainMenuScreen.Hide();
+            yield return loadingScreen.Show();
+            yield return sceneLoader.LoadScene(Constants.GameplaySceneKey);
+
+            var gameModeController = gameMode switch
+            {
+                GameMode.ClassicSolitaireMode => new ClassicSolitaireGameMode(Constants.ClassicSolitaireScreenPrefabKey),
+                _ => throw new ArgumentOutOfRangeException(nameof(gameMode), gameMode, null)
+            };
+            
+            yield return gameModeController.InitializeGame();
+            yield return loadingScreen.Hide();
+            yield return gameModeController.RunGame();
         }
     }
 }
