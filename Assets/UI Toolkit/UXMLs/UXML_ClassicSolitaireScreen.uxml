@@ -17,7 +17,15 @@
                 </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>
-        <ui:VisualElement name="card-container" class="middle-container" />
+        <ui:VisualElement name="card-container" class="middle-container row">
+            <ui:VisualElement name="card-column-0" class="card-column column" style="flex-grow: 1;" />
+            <ui:VisualElement name="card-column-1" class="card-column column" style="flex-grow: 1;" />
+            <ui:VisualElement name="card-column-2" class="card-column column" style="flex-grow: 1;" />
+            <ui:VisualElement name="card-column-3" class="card-column column" style="flex-grow: 1;" />
+            <ui:VisualElement name="card-column-4" class="card-column column" style="flex-grow: 1;" />
+            <ui:VisualElement name="card-column-5" class="card-column column" style="flex-grow: 1;" />
+            <ui:VisualElement name="card-column-6" class="card-column column" style="flex-grow: 1;" />
+        </ui:VisualElement>
         <ui:VisualElement class="bottom-container">
             <ui:VisualElement class="buttons-container row" style="flex-grow: 1;">
                 <ui:Button text="Settings" parse-escape-sequences="true" display-tooltip-when-elided="true" name="settings-button" class="gameplay-button" />

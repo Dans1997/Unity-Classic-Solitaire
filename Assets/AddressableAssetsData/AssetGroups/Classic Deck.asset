@@ -1,0 +1,285 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Classic Deck
+  m_EditorClassIdentifier: 
+  m_GroupName: Classic Deck
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 2d2adb9c7c8aacb4089fe4587ab716b5
+  m_SerializeEntries:
+  - m_GUID: 0f98841e587f52940842faf3c826c9b8
+    m_Address: AceOfCubs
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 12b34b963c41de944968855202a6a83c
+    m_Address: EightOfDiamonds
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 18ebc03d0276f40418de2f15ae030356
+    m_Address: QueenOfClubs
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 19f119d12b106d94bb7f0b74179c3332
+    m_Address: AceOfSpades
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 21bbb746c29ac95439142aa93f571782
+    m_Address: QueenOfDiamonds
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2a2c4eb69b58e8d40920a0ffebfe973d
+    m_Address: FiveOfSpades
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 32d04942be5fb1d4a950d8f6a07a1361
+    m_Address: SevenOfDiamonds
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 34847d13f831fe147ba01cc2b57f4cf2
+    m_Address: SixOfClubs
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 369f5b17893a49142a253d12851950d8
+    m_Address: KingOfHearts
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3a2366966f52ebc47a332c31c4fd4f4a
+    m_Address: FiveOfHearts
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3d0bf6b906801bf47b7bffc61b663112
+    m_Address: FiveOfClubs
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3f13e34fff87f944b9b9045a5a7ad648
+    m_Address: TwoOfHearts
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 483a923d86ee9e641975fad86943d99c
+    m_Address: FourOfClubs
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4eaff91ada887654695b5eeb2fcb1671
+    m_Address: KingOfClubs
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5121700c448db5240828da806475c26f
+    m_Address: QueenOfHearts
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5138e6299927ce34f9713fdca46f1789
+    m_Address: AceOfHearts
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 548a6ad60653a774c9ec84d95eaa00a3
+    m_Address: FiveOfDiamonds
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 62d5e2db24513774091d0da724e13e2f
+    m_Address: NineOfSpades
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6aa07dfdbba25d347afae26f8a0e0bd9
+    m_Address: TenOfSpades
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6ff6b5d1246e12040830daeb9dde0053
+    m_Address: NineOfHearts
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7b2b91e3e242701438624b572253a24d
+    m_Address: SevenOfHearts
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7ede4bec7d72eed4e8b544890b369ae9
+    m_Address: TwoOfDiamonds
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 888fcf69b0acce64bb9cc2911bfc9b4a
+    m_Address: ThreeOfHearts
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8c8cf19010c826f4c8c7de13b2afbcc1
+    m_Address: EightOfClubs
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 96b0a10faa73b494dbe86eccca22ec58
+    m_Address: ThreeOfDiamonds
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 96e5264ded8b11d40b511f4dac68ea8e
+    m_Address: TenOfClubs
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 98ee602c51f3c0144932f8f7d73861f0
+    m_Address: SixOfSpades
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9c12977bd0ef91b49a3838af40b28b7b
+    m_Address: TenOfHearts
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9d58e0b0c17571a409acce3460f18f41
+    m_Address: SevenOfClubs
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9e3bb8a550b542c49a7b07796b9a11f6
+    m_Address: EightOfHearts
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9ee4d26b93abc2149baa72a243a7b4ad
+    m_Address: TwoOfSpades
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9f0461c3d7207614e985fb9111fc4239
+    m_Address: AceOfDiamonds
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a47b2d70bc801c343a8996a979fe8ecf
+    m_Address: FourOfSpades
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a70cdb7d0d58b84439f8a6d3588b8c63
+    m_Address: SevenOfSpades
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ab57876e2272c82479023239dfa91a85
+    m_Address: KingOfSpades
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ab849809faf94fa479f3634802f7ae66
+    m_Address: EightOfSpades
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b496ff8a5df7df54fb949e0e05b72415
+    m_Address: ThreeOfClubs
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bb7a56a6ae29fdb4aa2ca9147c658449
+    m_Address: FourOfHearts
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c82cb04753956f94baa8ac6a2bb430f4
+    m_Address: TwoOfClubs
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c8cb1de9494ce5e4d8f0a70cfba8456a
+    m_Address: ThreeOfSpades
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d10d6dc5f377e6443beaa127035ffa1b
+    m_Address: NineOfClubs
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d403808149d94b644a48950e3c55278d
+    m_Address: SixOfDiamonds
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d4b6dc189d2aa7742adc82371579a56e
+    m_Address: NineOfDiamonds
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: dfea48a928a09ad48b819bac54457464
+    m_Address: SixOfHearts
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e1951052cb8799f4b8ee7ea35893ab41
+    m_Address: TenOfDiamonds
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ec7de8ab3d4d11444bafd3da8a1e4572
+    m_Address: JackOfSpades
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ee1c581524a99704488c61f28e7816ad
+    m_Address: FourOfDiamonds
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f13f1b2d35a4cf74ab6068767ad851e1
+    m_Address: KingOfDiamonds
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f76042c6d5075e34e94629a5edb1d140
+    m_Address: QueenOfSpades
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f911ea03f1a78054ebbd71214d4ae0a4
+    m_Address: JackOfDiamonds
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f9ab15e91ac1dff48875e17c7ff83753
+    m_Address: JackOfHearts
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fd34c5e8b1c5f1e4fa38cda62362d37d
+    m_Address: JackOfClubs
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 8ccac65346fe5df4284f8f7aa1ef895f, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: e6f02b859b7daf643806a8c1e5f862e2, type: 2}
+    - {fileID: 11400000, guid: e94aac602a9dc664da2510d90090cc8f, type: 2}

@@ -24,6 +24,7 @@ namespace Screens
         private Label timeLabel;
         private Label movesLabel;
         private VisualElement cardContainer;
+        private VisualElement[] cardColumns;
         
         public IEnumerator Show()
         {
@@ -90,6 +91,20 @@ namespace Screens
             if (cardContainer is null)
             {
                 cardContainer = rootElement.Q<Label>("card-container");
+            }
+
+            if (cardColumns is null)
+            {
+                cardColumns = new []
+                {
+                    rootElement.Q("card-column-0"),
+                    rootElement.Q("card-column-1"),
+                    rootElement.Q("card-column-2"),
+                    rootElement.Q("card-column-3"),
+                    rootElement.Q("card-column-4"),
+                    rootElement.Q("card-column-5"),
+                    rootElement.Q("card-column-6")
+                };
             }
 
             yield break;
