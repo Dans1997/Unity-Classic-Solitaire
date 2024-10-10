@@ -79,11 +79,6 @@ namespace Games.Klondike
                 new CardColumn(gameplayScreen.FindColumn("card-column-6"), cardHeightPercentage: 17f, marginTopPercentage: -100f)
             };
             
-            foreach (var tableauPile in tableauPiles)
-            {
-                tableauPile.CardColumnClicked += OnTableauPileClicked;
-            }
-            
             var deck = Enum.GetValues(typeof(CardType)).Cast<CardType>().ToList();
             var rng = new Random();
             var shuffledDeck = deck.OrderBy(_ => rng.Next()).ToList();
@@ -95,7 +90,7 @@ namespace Games.Klondike
                     var card = new Card(shuffledDeck[0], Constants.ClassicSolitaireFaceDownSpriteKey);
                     yield return card.LoadCardSprites();
 
-                    card.CardClicked += OnCardClicked;
+                    card.CardClicked += SelectCardColumn;
                     card.CardFaceChanged += OnCardFaceChanged;
                     shuffledDeck.RemoveAt(0);
                     tableauPiles[columnIndex].AddCard(card);
@@ -108,7 +103,7 @@ namespace Games.Klondike
                 var card = new Card(shuffledDeck[0], Constants.ClassicSolitaireFaceDownSpriteKey);
                 yield return card.LoadCardSprites();
                 
-                card.CardClicked += OnCardClicked;
+                card.CardClicked += SelectCardColumn;
                 shuffledDeck.RemoveAt(0);
                 stockPile.AddCard(card);
                 card.SetCardFace(CardFace.FaceDown);
@@ -129,15 +124,6 @@ namespace Games.Klondike
             StartTimer();
         }
 
-        private void OnCardClicked(Card clickedCard)
-        {
-            if (clickedCard.CardFace == CardFace.FaceDown) return;
-            if (selectedCard is not null) return;
-            
-            selectedCard ??= clickedCard;
-            Debug.Log($"{selectedCard} was selected");
-        }
-        
         private void OnFoundationPileClicked(CardColumn clickedFoundationPile)
         {
             if (selectedCard is null)
@@ -248,7 +234,6 @@ namespace Games.Klondike
             if (isDestinationTableau && !gameRules.CanMoveToTableau(selectedCard, destinationColumn))
             {
                 Debug.Log($"Cannot move {selectedCard} to tableau pile with top card {destinationColumn.TopCard}");
-                ResetSelection();
                 return false;
             }
 
@@ -345,9 +330,30 @@ namespace Games.Klondike
             gameplayScreen.SetMoveCount(moves.Count);
         }
         
+        private async void SelectCardColumn(Card clickedCard)
+        {
+            if (clickedCard.CardFace == CardFace.FaceDown) return;
+            if (selectedCard is not null) return;
+            
+            selectedCard = clickedCard;
+            selectedCard.SetSelected(true);
+
+            await Task.Yield();
+            foreach (var tableauPile in tableauPiles)
+            {
+                tableauPile.CardColumnClicked += OnTableauPileClicked;
+            }
+        }
+        
         private void ResetSelection()
         {
+            selectedCard.SetSelected(false);
             selectedCard = null;
+            
+            foreach (var tableauPile in tableauPiles)
+            {
+                tableauPile.CardColumnClicked -= OnTableauPileClicked;
+            }
         }
         
         private async void StartTimer()

@@ -98,6 +98,10 @@
     -unity-background-scale-mode: scale-to-fit;
 }
 
+.selected {
+    scale: 1.125;
+}
+
 .bottom-container {
     flex: 10%;
     width: 100%;

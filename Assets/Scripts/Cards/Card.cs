@@ -70,5 +70,11 @@ namespace Cards
         {
             style.height = new StyleLength(Length.Percent(heightPercentage));
         }
+
+        public void SetSelected(bool selected)
+        {
+            if (selected) AddToClassList("selected");
+            else RemoveFromClassList("selected");
+        }
     }
 }
