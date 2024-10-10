@@ -1,10 +1,11 @@
+using System.Collections.Generic;
 using Cards;
 
 namespace Interfaces
 {
     public interface IGameMove
     {
-        Card Card { get; }
+        List<Card> Cards { get; }
         CardColumn Origin { get; }
         CardColumn Destination { get; }
         bool WasFaceDown { get; }

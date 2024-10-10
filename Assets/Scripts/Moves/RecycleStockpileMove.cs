@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Cards;
 using Enums;
 using Interfaces;
@@ -6,7 +7,7 @@ namespace Moves
 {
     public class RecycleStockPileMove : IGameMove
     {
-        public Card Card => null;
+        public List<Card> Cards => null;
         public CardColumn Origin { get; }
         public CardColumn Destination { get; }
         public bool WasFaceDown => true;

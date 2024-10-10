@@ -80,6 +80,7 @@
 }
 
 .card-column {
+    min-width: 151px;
     flex: 1;
     height: 100%;
     justify-content: flex-start;

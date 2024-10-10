@@ -55,9 +55,35 @@ namespace Cards
         public void RemoveCard(Card card)
         {
             if (!ContainsCard(card)) throw new Exception($"{card} does not belong to this pile ({columnContainer.name})");
+            if (TopCard != card) throw new Exception($"{card} cannot be removed as it is not at the top of the stack");
+            
             CardStack.Pop();
             columnContainer.Remove(card);
             if (setTopCardFaceUpOnRemove) TopCard?.SetCardFace(CardFace.FaceUp);
+        }
+        
+        public void RemoveCards(List<Card> cards)
+        {
+            for (var i = cards.Count - 1; i >= 0; i--)
+            {
+                RemoveCard(cards[i]);
+            }
+        }
+        
+        public List<Card> GetCardsAbove(Card card)
+        {
+            if (!ContainsCard(card)) throw new Exception($"{card} does not belong to this pile ({columnContainer.name})");
+
+            var stackList = new List<Card>(CardStack);
+            var index = stackList.IndexOf(card);
+            
+            var result = new List<Card>();
+            for (var i = index; i >= 0; i--)
+            {
+                result.Add(stackList[i]);
+            }
+
+            return result;
         }
     }
 }

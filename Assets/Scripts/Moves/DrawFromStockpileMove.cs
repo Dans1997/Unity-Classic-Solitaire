@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Cards;
 using Enums;
 using Interfaces;
@@ -6,31 +7,37 @@ namespace Moves
 {
     public class DrawFromStockpileMove : IGameMove
     {
-        public Card Card { get; }
+        public List<Card> Cards { get; }
         public CardColumn Origin { get; }
         public CardColumn Destination { get; }
         public bool WasFaceDown => true;
         public int Score => 0;
 
-        public DrawFromStockpileMove(Card card, CardColumn origin, CardColumn destination)
+        public DrawFromStockpileMove(List<Card> cards, CardColumn origin, CardColumn destination)
         {
-            Card = card;
+            Cards = cards;
             Origin = origin;
             Destination = destination;
         }
 
         public void Execute()
         {
-            Origin.RemoveCard(Card);
-            Destination.AddCard(Card);
-            Card.SetCardFace(CardFace.FaceUp);
+            foreach (var card in Cards)
+            {
+                Origin.RemoveCard(card);
+                Destination.AddCard(card);
+                card.SetCardFace(CardFace.FaceUp);
+            }
         }
 
         public void Undo()
         {
-            Destination.RemoveCard(Card);
-            Origin.AddCard(Card);
-            Card.SetCardFace(CardFace.FaceDown);
+            foreach (var card in Cards)
+            {            
+                Destination.RemoveCard(card);
+                Origin.AddCard(card);
+                card.SetCardFace(CardFace.FaceDown);
+            }
         }
     }
 }
