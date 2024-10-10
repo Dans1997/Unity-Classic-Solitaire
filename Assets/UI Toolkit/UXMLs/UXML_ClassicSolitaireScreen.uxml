@@ -22,7 +22,7 @@
                 <ui:VisualElement name="stock-pile" class="card-column column">
                     <ui:VisualElement class="card-column-background" />
                 </ui:VisualElement>
-                <ui:VisualElement name="empty-column" class="card-column column" />
+                <ui:VisualElement name="stock-pile-dump" class="card-column column" />
                 <ui:VisualElement name="empty-column" class="card-column column" />
                 <ui:VisualElement name="foundations-0" class="card-column column">
                     <ui:VisualElement class="card-column-background" />

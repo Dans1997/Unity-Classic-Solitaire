@@ -23,6 +23,7 @@ namespace Games.Klondike
         private readonly string gameplayScreenPrefabKey;
         private IGameplayScreen gameplayScreen;
         private CardColumn stockPile;
+        private CardColumn stockPileDump;
         private CardColumn[] foundationPiles;
         private CardColumn[] tableauPiles;
         private Card[] cards;
@@ -47,14 +48,16 @@ namespace Games.Klondike
 
             yield return gameplayScreen.Show();
 
-            stockPile = new CardColumn(gameplayScreen.FindColumn("stock-pile"), 24, -150f);
+            stockPile = new CardColumn(gameplayScreen.FindColumn("stock-pile"), 24, 70f, -140f, false);
+            stockPileDump = new CardColumn(gameplayScreen.FindColumn("stock-pile-dump"), 24, 70f, -140f, false);
+            stockPile.CardColumnClicked += OnStockPileClicked;
 
             foundationPiles = new[]
             {
-                new CardColumn(gameplayScreen.FindColumn("foundations-0"), 13, -150f),
-                new CardColumn(gameplayScreen.FindColumn("foundations-1"), 13, -150f),
-                new CardColumn(gameplayScreen.FindColumn("foundations-2"), 13, -150f),
-                new CardColumn(gameplayScreen.FindColumn("foundations-3"), 13, -150f),
+                new CardColumn(gameplayScreen.FindColumn("foundations-0"), 13, 70f, -140f),
+                new CardColumn(gameplayScreen.FindColumn("foundations-1"), 13, 70f, -140f),
+                new CardColumn(gameplayScreen.FindColumn("foundations-2"), 13, 70f, -140f),
+                new CardColumn(gameplayScreen.FindColumn("foundations-3"), 13, 70f, -140f),
             };
 
             foreach (var foundationPile in foundationPiles)
@@ -64,13 +67,13 @@ namespace Games.Klondike
             
             tableauPiles = new []
             {
-                new CardColumn(gameplayScreen.FindColumn("card-column-0"), marginTopPercentage: -100f),
-                new CardColumn(gameplayScreen.FindColumn("card-column-1"), marginTopPercentage: -100f),
-                new CardColumn(gameplayScreen.FindColumn("card-column-2"), marginTopPercentage: -100f),
-                new CardColumn(gameplayScreen.FindColumn("card-column-3"), marginTopPercentage: -100f),
-                new CardColumn(gameplayScreen.FindColumn("card-column-4"), marginTopPercentage: -100f),
-                new CardColumn(gameplayScreen.FindColumn("card-column-5"), marginTopPercentage: -100f),
-                new CardColumn(gameplayScreen.FindColumn("card-column-6"), marginTopPercentage: -100f)
+                new CardColumn(gameplayScreen.FindColumn("card-column-0"), cardHeightPercentage: 17f, marginTopPercentage: -100f),
+                new CardColumn(gameplayScreen.FindColumn("card-column-1"), cardHeightPercentage: 17f, marginTopPercentage: -100f),
+                new CardColumn(gameplayScreen.FindColumn("card-column-2"), cardHeightPercentage: 17f, marginTopPercentage: -100f),
+                new CardColumn(gameplayScreen.FindColumn("card-column-3"), cardHeightPercentage: 17f, marginTopPercentage: -100f),
+                new CardColumn(gameplayScreen.FindColumn("card-column-4"), cardHeightPercentage: 17f, marginTopPercentage: -100f),
+                new CardColumn(gameplayScreen.FindColumn("card-column-5"), cardHeightPercentage: 17f, marginTopPercentage: -100f),
+                new CardColumn(gameplayScreen.FindColumn("card-column-6"), cardHeightPercentage: 17f, marginTopPercentage: -100f)
             };
             
             var deck = Enum.GetValues(typeof(CardType)).Cast<CardType>().ToList();
@@ -81,7 +84,7 @@ namespace Games.Klondike
             {
                 for (var cardIndex = 0; cardIndex <= columnIndex; cardIndex++)
                 {
-                    var card = new Card(shuffledDeck[0], Constants.ClassicSolitaireFaceDownSpriteKey, 17f);
+                    var card = new Card(shuffledDeck[0], Constants.ClassicSolitaireFaceDownSpriteKey);
                     yield return card.LoadCardSprites();
 
                     card.CardClicked += OnCardClicked;
@@ -93,9 +96,10 @@ namespace Games.Klondike
             var stockPileCount = shuffledDeck.Count;
             for (var i = 0; i < stockPileCount; i++)
             {
-                var card = new Card(shuffledDeck[0], Constants.ClassicSolitaireFaceDownSpriteKey, 75f);
+                var card = new Card(shuffledDeck[0], Constants.ClassicSolitaireFaceDownSpriteKey);
                 yield return card.LoadCardSprites();
                 
+                card.CardClicked += OnCardClicked;
                 shuffledDeck.RemoveAt(0);
                 stockPile.AddCard(card);
                 card.SetCardFace(CardFace.FaceDown);
@@ -122,6 +126,13 @@ namespace Games.Klondike
                 var destinationColumn = GetCardColumn(clickedCard);
                 var isFoundationPile = foundationPiles.Contains(destinationColumn);
                 var isTableauPile = tableauPiles.Contains(destinationColumn);
+
+                if (!isFoundationPile && !isTableauPile)
+                {
+                    Debug.Log($"Cannot move {selectedCard} to this pile because it's not a tableau or a foundation");
+                    ResetSelection();
+                    return;
+                }
 
                 if (isFoundationPile && !gameRules.CanMoveToFoundation(selectedCard, destinationColumn))
                 {
@@ -170,6 +181,36 @@ namespace Games.Klondike
             clickedFoundationPile.AddCard(selectedCard);
             ResetSelection();
         }
+        
+        private void OnStockPileClicked(CardColumn clickedStockPile)
+        {
+            if (stockPile != clickedStockPile)
+            {
+                Debug.LogError($"{clickedStockPile} is not a stock pile");
+                return;
+            }
+
+            if (stockPile.IsEmpty)
+            {
+                Debug.Log("Resetting stock pile");
+                // TODO: Move all cards from the dump back to the stock pile
+                return;
+            }
+
+            if (selectedCard is not null)
+            {
+                Debug.Log("Clicked on stock pile with a selected card");
+                ResetSelection();
+                return;
+            }
+
+            var cardToMove = stockPile.TopCard;
+            cardToMove.SetCardFace(CardFace.FaceUp);
+            RegisterMove(new Move(cardToMove, stockPile, stockPileDump, cardToMove.CardFace == CardFace.FaceDown));
+            stockPile.RemoveCard(cardToMove);
+            stockPileDump.AddCard(cardToMove);
+            ResetSelection();
+        }
 
         private IEnumerator CreateGameplayScreen()
         {
@@ -204,6 +245,7 @@ namespace Games.Klondike
         private CardColumn GetCardColumn(Card card)
         {
             if (stockPile.ContainsCard(card)) return stockPile;
+            if (stockPileDump.ContainsCard(card)) return stockPileDump;
             foreach (var foundation in foundationPiles) if (foundation.ContainsCard(card)) return foundation;
             foreach (var column in tableauPiles) if (column.ContainsCard(card)) return column;
 
