@@ -18,7 +18,7 @@ MonoBehaviour:
   m_GUID: 2d2adb9c7c8aacb4089fe4587ab716b5
   m_SerializeEntries:
   - m_GUID: 0f98841e587f52940842faf3c826c9b8
-    m_Address: AceOfCubs
+    m_Address: AceOfClubs
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -149,6 +149,11 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 98ee602c51f3c0144932f8f7d73861f0
     m_Address: SixOfSpades
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 99f4a85aae324524f97c5e7d798e657a
+    m_Address: ClassicSolitaireFaceDownSprite
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Cards;
 using Interfaces;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -12,7 +13,7 @@ namespace Screens
         public event Action ExitButtonClicked;
         public event Action PauseButtonClicked;
         public event Action UndoButtonClicked;
-        
+
         [field: SerializeField] public UIDocument UIDocument { get; private set; }
         
         private VisualElement rootElement;
@@ -24,7 +25,6 @@ namespace Screens
         private Label timeLabel;
         private Label movesLabel;
         private VisualElement cardContainer;
-        private VisualElement[] cardColumns;
         
         public IEnumerator Show()
         {
@@ -38,6 +38,11 @@ namespace Screens
             yield break;
         }
         
+        public VisualElement FindColumn(string className)
+        {
+            return rootElement.Q<VisualElement>(className);
+        }
+
         private IEnumerator Setup()
         {
             rootElement ??= UIDocument.rootVisualElement;
@@ -91,20 +96,6 @@ namespace Screens
             if (cardContainer is null)
             {
                 cardContainer = rootElement.Q<Label>("card-container");
-            }
-
-            if (cardColumns is null)
-            {
-                cardColumns = new []
-                {
-                    rootElement.Q("card-column-0"),
-                    rootElement.Q("card-column-1"),
-                    rootElement.Q("card-column-2"),
-                    rootElement.Q("card-column-3"),
-                    rootElement.Q("card-column-4"),
-                    rootElement.Q("card-column-5"),
-                    rootElement.Q("card-column-6")
-                };
             }
 
             yield break;

@@ -7,5 +7,6 @@ namespace Utils
         public const string LoadingScreenPrefabKey = "LoadingScreenPrefab";
         public const string MainMenuScreenPrefabKey = "MainMenuScreenPrefab";
         public const string ClassicSolitaireScreenPrefabKey = "ClassicSolitaireScreenPrefab";
+        public const string ClassicSolitaireFaceDownSpriteKey = "ClassicSolitaireFaceDownSprite";
     }
 }

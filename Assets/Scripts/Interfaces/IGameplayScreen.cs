@@ -1,4 +1,5 @@
 using System;
+using UnityEngine.UIElements;
 
 namespace Interfaces
 {
@@ -8,5 +9,7 @@ namespace Interfaces
         event Action ExitButtonClicked;
         event Action PauseButtonClicked;
         event Action UndoButtonClicked;
+        
+        VisualElement FindColumn(string className);
     }
 }

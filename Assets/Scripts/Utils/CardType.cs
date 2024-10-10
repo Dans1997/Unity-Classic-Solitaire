@@ -1,6 +1,6 @@
 namespace Utils
 {
-    public enum Card
+    public enum CardType
     {
         TwoOfClubs = 0,
         TwoOfDiamonds = 1,
