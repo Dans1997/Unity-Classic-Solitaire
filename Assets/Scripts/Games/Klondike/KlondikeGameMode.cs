@@ -3,30 +3,38 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Cards;
+using Enums;
 using Interfaces;
+using Moves;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using Utils;
 using Random = System.Random;
 
-namespace Games.Modes
+namespace Games.Klondike
 {
-    public class ClassicSolitaireGameMode : IGameMode
+    public class KlondikeGameMode : IGameMode
     {
-        private readonly Stack<string> moves;
+        public GameMode GameMode => GameMode.Klondike;
+        
+        private readonly IGameRules gameRules;
+        private readonly Stack<Move> moves;
         private readonly string gameplayScreenPrefabKey;
         private IGameplayScreen gameplayScreen;
         private CardColumn stockPile;
-        private CardColumn[] foundations;
-        private CardColumn[] cardColumns;
+        private CardColumn[] foundationPiles;
+        private CardColumn[] tableauPiles;
         private Card[] cards;
 
-        public ClassicSolitaireGameMode(string gameplayScreenPrefabKey)
+        private Card selectedCard;
+
+        public KlondikeGameMode(string gameplayScreenPrefabKey)
         {
-            moves = new Stack<string>();
+            gameRules = new KlondikeGameRules();
+            moves = new Stack<Move>();
             this.gameplayScreenPrefabKey = gameplayScreenPrefabKey;
         }
-
+        
         public IEnumerator InitializeGame()
         {
             yield return CreateGameplayScreen();
@@ -40,7 +48,7 @@ namespace Games.Modes
 
             stockPile = new CardColumn(gameplayScreen.FindColumn("stock-pile"), 24, -150f);
 
-            foundations = new[]
+            foundationPiles = new[]
             {
                 new CardColumn(gameplayScreen.FindColumn("foundations-0"), 13, -150f),
                 new CardColumn(gameplayScreen.FindColumn("foundations-1"), 13, -150f),
@@ -48,7 +56,7 @@ namespace Games.Modes
                 new CardColumn(gameplayScreen.FindColumn("foundations-3"), 13, -150f),
             };
             
-            cardColumns = new []
+            tableauPiles = new []
             {
                 new CardColumn(gameplayScreen.FindColumn("card-column-0"), marginTopPercentage: -100f),
                 new CardColumn(gameplayScreen.FindColumn("card-column-1"), marginTopPercentage: -100f),
@@ -72,7 +80,7 @@ namespace Games.Modes
 
                     card.CardClicked += OnCardClicked;
                     shuffledDeck.RemoveAt(0);
-                    cardColumns[columnIndex].AddCard(card);
+                    tableauPiles[columnIndex].AddCard(card);
                 }
             }
 
@@ -87,7 +95,7 @@ namespace Games.Modes
                 card.SetCardFace(CardFace.FaceDown);
             }
 
-            foreach (var cardColumn in cardColumns)
+            foreach (var cardColumn in tableauPiles)
             {
                 cardColumn.TopCard.SetCardFace(CardFace.FaceUp);
             }
@@ -97,19 +105,43 @@ namespace Games.Modes
         {
             yield break;
         }
-
-        public void RegisterMove(string move)
-        {
-            moves.Push(move);
-        }
         
         private void OnCardClicked(Card clickedCard)
         {
             if (clickedCard.CardFace == CardFace.FaceDown) return;
-            
-            Debug.Log($"{clickedCard.CardType} was clicked");
+
+            if (selectedCard is not null)
+            {
+                var originColumn = GetCardColumn(selectedCard);
+                var destinationColumn = GetCardColumn(clickedCard);
+                var isFoundationPile = foundationPiles.Contains(destinationColumn);
+                var isTableauPile = tableauPiles.Contains(destinationColumn);
+
+                if (isFoundationPile && !gameRules.CanMoveToFoundation(selectedCard, destinationColumn))
+                {
+                    Debug.Log($"Cannot move {selectedCard} to foundation pile with top card {destinationColumn.TopCard}");
+                    ResetSelection();
+                    return;
+                }
+
+                if (isTableauPile && !gameRules.CanMoveToTableau(selectedCard, destinationColumn))
+                {
+                    Debug.Log($"Cannot move {selectedCard} to tableau pile with top card {destinationColumn.TopCard}");
+                    ResetSelection();
+                    return;
+                }
+                
+                RegisterMove(new Move(selectedCard, originColumn, destinationColumn, clickedCard.CardFace == CardFace.FaceDown));
+                originColumn.RemoveCard(selectedCard);
+                destinationColumn.AddCard(selectedCard);
+                ResetSelection();
+                return;
+            }
+
+            selectedCard ??= clickedCard;
+            Debug.Log($"{selectedCard} was selected");
         }
-        
+
         private IEnumerator CreateGameplayScreen()
         {
             var handle = Addressables.InstantiateAsync(gameplayScreenPrefabKey);
@@ -134,15 +166,29 @@ namespace Games.Modes
 
         private void OnUndoMoveClicked()
         {
-            throw new System.NotImplementedException();
+            if (moves.Count <= 0) return;
+            
+            var lastMove = moves.Pop();
+            lastMove.Undo();
+        }
+
+        private CardColumn GetCardColumn(Card card)
+        {
+            if (stockPile.ContainsCard(card)) return stockPile;
+            foreach (var foundation in foundationPiles) if (foundation.ContainsCard(card)) return foundation;
+            foreach (var column in tableauPiles) if (column.ContainsCard(card)) return column;
+
+            throw new Exception($"{card} was not found in any pile");
+        }
+
+        private void RegisterMove(Move move)
+        {
+            moves.Push(move);
         }
         
-        private void UndoLastMove()
+        private void ResetSelection()
         {
-            if (moves.Count > 0)
-            {
-                moves.Pop();
-            }
+            selectedCard = null;
         }
     }
 }

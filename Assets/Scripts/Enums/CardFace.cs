@@ -1,4 +1,4 @@
-namespace Utils
+namespace Enums
 {
     public enum CardFace
     {

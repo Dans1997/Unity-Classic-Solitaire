@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Enums;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.UIElements;
@@ -12,6 +13,8 @@ namespace Cards
         public event Action<Card> CardClicked;
         public CardType CardType { get; }
         public CardFace CardFace { get; private set; }
+        public CardRank Rank { get; private set; }
+        public CardSuit Suit { get; private set; }
 
         private readonly Image cardImage;
         private readonly string faceDownSpriteKey;
@@ -21,6 +24,8 @@ namespace Cards
         public Card(CardType cardType, string faceDownSpriteKey, float heightPercentage)
         {
             CardType = cardType;
+            Rank = CardUtils.GetCardRank(cardType);
+            Suit = CardUtils.GetCardSuit(cardType);
             this.faceDownSpriteKey = faceDownSpriteKey;
             
             cardImage = new Image();
@@ -50,6 +55,11 @@ namespace Cards
             faceUpSprite = faceUpSpriteHandle.Task.Result;
             faceDownSprite = faceDownSpriteHandle.Task.Result;
             SetCardFace(CardFace.FaceDown);
+        }
+
+        public override string ToString()
+        {
+            return $"{CardType}";
         }
     }
 }

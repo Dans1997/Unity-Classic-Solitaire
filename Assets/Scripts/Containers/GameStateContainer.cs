@@ -1,6 +1,6 @@
 using System;
 using System.Collections;
-using Games.Modes;
+using Games.Klondike;
 using Interfaces;
 using Scenes;
 using Screens;
@@ -48,7 +48,7 @@ namespace Containers
 
         private void OnPlayButtonClicked()
         {
-            StartCoroutine(LoadGameMode(GameMode.ClassicSolitaireMode));
+            StartCoroutine(LoadGameMode(GameMode.Klondike));
         }
 
         private void OnOptionsButtonClicked()
@@ -69,7 +69,7 @@ namespace Containers
 
             var gameModeController = gameMode switch
             {
-                GameMode.ClassicSolitaireMode => new ClassicSolitaireGameMode(Constants.ClassicSolitaireScreenPrefabKey),
+                GameMode.Klondike => new KlondikeGameMode(Constants.ClassicSolitaireScreenPrefabKey),
                 _ => throw new ArgumentOutOfRangeException(nameof(gameMode), gameMode, null)
             };
             
