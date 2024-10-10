@@ -20,15 +20,15 @@ namespace Cards
 
         private readonly Image cardImage;
         private readonly string faceDownSpriteKey;
+        private readonly Sprite faceDownSprite;
         private Sprite faceUpSprite;
-        private Sprite faceDownSprite;
-
-        public Card(CardType cardType, string faceDownSpriteKey)
+        
+        public Card(CardType cardType, Sprite faceDownSprite)
         {
             CardType = cardType;
             Rank = CardUtils.GetCardRank(cardType);
             Suit = CardUtils.GetCardSuit(cardType);
-            this.faceDownSpriteKey = faceDownSpriteKey;
+            this.faceDownSprite = faceDownSprite;
             
             cardImage = new Image();
             Add(cardImage);
@@ -53,11 +53,7 @@ namespace Cards
             var faceUpSpriteHandle = Addressables.LoadAssetAsync<Sprite>(CardType.ToString());
             yield return faceUpSpriteHandle;
             
-            var faceDownSpriteHandle = Addressables.LoadAssetAsync<Sprite>(faceDownSpriteKey);
-            yield return faceDownSpriteHandle;
-            
             faceUpSprite = faceUpSpriteHandle.Task.Result;
-            faceDownSprite = faceDownSpriteHandle.Task.Result;
             SetCardFace(CardFace.FaceDown);
         }
 

@@ -79,6 +79,9 @@ namespace Games.Klondike
                 new CardColumn(gameplayScreen.FindColumn("card-column-6"), cardHeightPercentage: 17f, marginTopPercentage: -100f)
             };
             
+            var faceDownSpriteHandle = Addressables.LoadAssetAsync<Sprite>(Constants.ClassicSolitaireFaceDownSpriteKey);
+            yield return faceDownSpriteHandle;
+            
             var deck = Enum.GetValues(typeof(CardType)).Cast<CardType>().ToList();
             var rng = new Random();
             var shuffledDeck = deck.OrderBy(_ => rng.Next()).ToList();
@@ -87,7 +90,7 @@ namespace Games.Klondike
             {
                 for (var cardIndex = 0; cardIndex <= columnIndex; cardIndex++)
                 {
-                    var card = new Card(shuffledDeck[0], Constants.ClassicSolitaireFaceDownSpriteKey);
+                    var card = new Card(shuffledDeck[0], faceDownSpriteHandle.Result);
                     yield return card.LoadCardSprites();
 
                     card.CardClicked += SelectCardColumn;
@@ -100,7 +103,7 @@ namespace Games.Klondike
             var stockPileCount = shuffledDeck.Count;
             for (var i = 0; i < stockPileCount; i++)
             {
-                var card = new Card(shuffledDeck[0], Constants.ClassicSolitaireFaceDownSpriteKey);
+                var card = new Card(shuffledDeck[0], faceDownSpriteHandle.Result);
                 yield return card.LoadCardSprites();
                 
                 card.CardClicked += SelectCardColumn;
