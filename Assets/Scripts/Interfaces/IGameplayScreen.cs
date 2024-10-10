@@ -11,5 +11,8 @@ namespace Interfaces
         event Action UndoButtonClicked;
         
         VisualElement FindColumn(string className);
+        void SetMoveCount(int movesCount);
+        void SetTime(float time);
+        void SetScore(int score);
     }
 }

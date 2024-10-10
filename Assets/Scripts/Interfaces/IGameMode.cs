@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using Utils;
 
@@ -5,8 +6,9 @@ namespace Interfaces
 {
     public interface IGameMode
     {
+        public event Action GameFinished;
         GameMode GameMode { get; }
-        IEnumerator InitializeGame();
-        IEnumerator RunGame();
+        IEnumerator DealCards();
+        void StartGame();
     }
 }

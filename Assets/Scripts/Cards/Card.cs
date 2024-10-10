@@ -11,6 +11,8 @@ namespace Cards
     public class Card : Button
     {
         public event Action<Card> CardClicked;
+        public event Action<CardFace, CardFace> CardFaceChanged;
+        
         public CardType CardType { get; }
         public CardFace CardFace { get; private set; }
         public CardRank Rank { get; private set; }
@@ -38,9 +40,12 @@ namespace Cards
         public void SetCardFace(CardFace newFace)
         {
             if (CardFace == newFace) return;
-            
+            var oldFace = CardFace;
             CardFace = newFace;
             cardImage.sprite = CardFace == CardFace.FaceUp ? faceUpSprite : faceDownSprite;
+            pickingMode = CardFace == CardFace.FaceUp ? PickingMode.Position : PickingMode.Ignore;
+            
+            CardFaceChanged?.Invoke(oldFace, newFace);
         }
     
         public IEnumerator LoadCardSprites()

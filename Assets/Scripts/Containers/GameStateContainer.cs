@@ -73,9 +73,16 @@ namespace Containers
                 _ => throw new ArgumentOutOfRangeException(nameof(gameMode), gameMode, null)
             };
             
-            yield return gameModeController.InitializeGame();
+            yield return gameModeController.DealCards();
             yield return loadingScreen.Hide();
-            yield return gameModeController.RunGame();
+
+            gameModeController.GameFinished += OnGameFinished;
+            gameModeController.StartGame();
+        }
+
+        private void OnGameFinished()
+        {
+            Debug.Log("Game finished");
         }
     }
 }

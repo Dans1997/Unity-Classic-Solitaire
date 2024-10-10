@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Cards;
 using Enums;
 using Interfaces;
@@ -8,6 +9,11 @@ namespace Games.Klondike
 {
     public class KlondikeGameRules : IGameRules
     {
+        public bool CheckForWin(CardColumn[] foundationPiles)
+        {
+            return foundationPiles.All(IsFoundationPileComplete);
+        }
+        
         public bool CanMoveToFoundation(Card cardToMove, CardColumn foundation)
         {
             if (cardToMove is null) throw new ArgumentNullException(nameof(cardToMove));
@@ -26,6 +32,14 @@ namespace Games.Klondike
 
             var topCard = tableau.TopCard;
             return topCard != null && CardUtils.IsOppositeColor(cardToMove, topCard) && cardToMove.Rank == topCard.Rank + 1;
+        }
+        
+        public bool IsFoundationPileComplete(CardColumn foundationPile)
+        {
+            if (foundationPile is not { CardCount: 13 }) return false;
+
+            var topCard = foundationPile.TopCard;
+            return topCard is { Rank: CardRank.King };
         }
     }
 }

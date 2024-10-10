@@ -36,10 +36,15 @@ namespace Screens
             yield break;
         }
         
-        public VisualElement FindColumn(string className)
+        public VisualElement FindColumn(string className) => rootElement.Q<VisualElement>(className);
+        public void SetMoveCount(int movesCount) => movesLabel.text = movesCount.ToString();
+        public void SetTime(float time)
         {
-            return rootElement.Q<VisualElement>(className);
+            var minutes = Mathf.FloorToInt(time / 60);
+            var seconds = Mathf.FloorToInt(time % 60);
+            timeLabel.text = $"{minutes:00}:{seconds:00}";
         }
+        public void SetScore(int score) => scoreLabel.text = score.ToString();
 
         private IEnumerator Setup()
         {

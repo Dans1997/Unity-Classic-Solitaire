@@ -10,7 +10,8 @@ namespace Cards
     {
         public event Action<CardColumn> CardColumnClicked;
         
-        private readonly Stack<Card> cardStack;
+        public readonly Stack<Card> CardStack;
+        
         private readonly int capacity;
         private readonly float cardHeightPercentage;
         private readonly float marginTopPercentage;
@@ -18,15 +19,16 @@ namespace Cards
         private VisualElement columnContainer;
         private readonly bool setTopCardFaceUpOnRemove;
 
-        public Card TopCard => cardStack.Count <= 0 ? null : cardStack.Peek();
+        public Card TopCard => CardStack.Count <= 0 ? null : CardStack.Peek();
         public bool IsEmpty => TopCard is null;
-
-        public bool ContainsCard(Card card) => cardStack.Contains(card);
+        public int CardCount => CardStack.Count;
+        
+        public bool ContainsCard(Card card) => CardStack.Contains(card);
 
         public CardColumn(VisualElement columnContainer, int capacity = 13,  float cardHeightPercentage = 17f, 
             float marginTopPercentage = 0f, bool setTopCardFaceUpOnRemove = true)
         {
-            cardStack = new Stack<Card>(capacity);
+            CardStack = new Stack<Card>(capacity);
             this.capacity = capacity;
             this.cardHeightPercentage = cardHeightPercentage;
             this.marginTopPercentage = marginTopPercentage;
@@ -38,22 +40,22 @@ namespace Cards
         
         public void AddCard(Card card)
         {
-            if (cardStack.Count >= capacity)
+            if (CardStack.Count >= capacity)
             {
                 Debug.LogError("Card stack is at capacity");
                 return;
             }
             
             card.SetHeightPercentage(cardHeightPercentage);
-            card.style.marginTop = cardStack.Count == 0 ? 0 : Length.Percent(marginTopPercentage);
-            cardStack.Push(card);
+            card.style.marginTop = CardStack.Count == 0 ? 0 : Length.Percent(marginTopPercentage);
+            CardStack.Push(card);
             columnContainer.Add(card);
         }
 
         public void RemoveCard(Card card)
         {
             if (!ContainsCard(card)) throw new Exception($"{card} does not belong to this pile ({columnContainer.name})");
-            cardStack.Pop();
+            CardStack.Pop();
             columnContainer.Remove(card);
             if (setTopCardFaceUpOnRemove) TopCard?.SetCardFace(CardFace.FaceUp);
         }

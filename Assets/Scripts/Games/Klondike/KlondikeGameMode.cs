@@ -2,13 +2,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Cards;
 using Enums;
 using Interfaces;
 using Moves;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
-using UnityEngine.UIElements;
 using Utils;
 using Random = System.Random;
 
@@ -16,10 +16,11 @@ namespace Games.Klondike
 {
     public class KlondikeGameMode : IGameMode
     {
+        public event Action GameFinished;
         public GameMode GameMode => GameMode.Klondike;
         
         private readonly IGameRules gameRules;
-        private readonly Stack<Move> moves;
+        private readonly Stack<IGameMove> moves;
         private readonly string gameplayScreenPrefabKey;
         private IGameplayScreen gameplayScreen;
         private CardColumn stockPile;
@@ -28,16 +29,18 @@ namespace Games.Klondike
         private CardColumn[] tableauPiles;
         private Card[] cards;
 
+        private int score;
+        private float gameStartTime;
         private Card selectedCard;
 
         public KlondikeGameMode(string gameplayScreenPrefabKey)
         {
             gameRules = new KlondikeGameRules();
-            moves = new Stack<Move>();
+            moves = new Stack<IGameMove>();
             this.gameplayScreenPrefabKey = gameplayScreenPrefabKey;
         }
         
-        public IEnumerator InitializeGame()
+        public IEnumerator DealCards()
         {
             yield return CreateGameplayScreen();
             
@@ -76,6 +79,11 @@ namespace Games.Klondike
                 new CardColumn(gameplayScreen.FindColumn("card-column-6"), cardHeightPercentage: 17f, marginTopPercentage: -100f)
             };
             
+            foreach (var tableauPile in tableauPiles)
+            {
+                tableauPile.CardColumnClicked += OnTableauPileClicked;
+            }
+            
             var deck = Enum.GetValues(typeof(CardType)).Cast<CardType>().ToList();
             var rng = new Random();
             var shuffledDeck = deck.OrderBy(_ => rng.Next()).ToList();
@@ -88,6 +96,7 @@ namespace Games.Klondike
                     yield return card.LoadCardSprites();
 
                     card.CardClicked += OnCardClicked;
+                    card.CardFaceChanged += OnCardFaceChanged;
                     shuffledDeck.RemoveAt(0);
                     tableauPiles[columnIndex].AddCard(card);
                 }
@@ -111,52 +120,20 @@ namespace Games.Klondike
             }
         }
 
-        public IEnumerator RunGame()
+        public void StartGame()
         {
-            yield break;
+            if (score != 0) throw new Exception("Game's score is dirty");
+            if (gameStartTime != 0) throw new Exception("Game's timeSinceStart is dirty");
+            if (moves.Count != 0) throw new Exception("Game's moves are dirty");
+
+            StartTimer();
         }
-        
+
         private void OnCardClicked(Card clickedCard)
         {
             if (clickedCard.CardFace == CardFace.FaceDown) return;
-
-            if (selectedCard is not null)
-            {
-                var originColumn = GetCardColumn(selectedCard);
-                var destinationColumn = GetCardColumn(clickedCard);
-                var isFoundationPile = foundationPiles.Contains(destinationColumn);
-                var isTableauPile = tableauPiles.Contains(destinationColumn);
-
-                if (!isFoundationPile && !isTableauPile)
-                {
-                    Debug.Log($"Cannot move {selectedCard} to this pile because it's not a tableau or a foundation");
-                    ResetSelection();
-                    return;
-                }
-
-                if (isFoundationPile && !gameRules.CanMoveToFoundation(selectedCard, destinationColumn))
-                {
-                    Debug.Log($"Cannot move {selectedCard} to foundation pile with top card {destinationColumn.TopCard}");
-                    ResetSelection();
-                    return;
-                }
-
-                if (isTableauPile && !gameRules.CanMoveToTableau(selectedCard, destinationColumn))
-                {
-                    Debug.Log($"Cannot move {selectedCard} to tableau pile with top card {destinationColumn.TopCard}");
-                    ResetSelection();
-                    return;
-                }
-                
-                RegisterMove(new Move(selectedCard, originColumn, destinationColumn, clickedCard.CardFace == CardFace.FaceDown));
-                originColumn.RemoveCard(selectedCard);
-                destinationColumn.AddCard(selectedCard);
-                selectedCard.SetHeightPercentage(75f);
-                selectedCard.pickingMode = PickingMode.Ignore;
-                ResetSelection();
-                return;
-            }
-
+            if (selectedCard is not null) return;
+            
             selectedCard ??= clickedCard;
             Debug.Log($"{selectedCard} was selected");
         }
@@ -175,10 +152,25 @@ namespace Games.Klondike
                 return;
             }
             
-            var originColumn = GetCardColumn(selectedCard);
-            RegisterMove(new Move(selectedCard, originColumn, clickedFoundationPile, selectedCard.CardFace == CardFace.FaceDown));
-            originColumn.RemoveCard(selectedCard);
-            clickedFoundationPile.AddCard(selectedCard);
+            if (TryCreateMove(clickedFoundationPile, out var move)) RegisterMove(move);
+            ResetSelection();
+        }
+        
+        private void OnTableauPileClicked(CardColumn clickedTableauPile)
+        {
+            if (selectedCard is null)
+            {
+                Debug.Log($"{clickedTableauPile} was clicked, but no card is selected");
+                return;
+            }
+            
+            if (!tableauPiles.Contains(clickedTableauPile))
+            {
+                Debug.LogError($"{clickedTableauPile} is not a tableau pile");
+                return;
+            }
+            
+            if (TryCreateMove(clickedTableauPile, out var move)) RegisterMove(move);
             ResetSelection();
         }
         
@@ -192,8 +184,9 @@ namespace Games.Klondike
 
             if (stockPile.IsEmpty)
             {
-                Debug.Log("Resetting stock pile");
-                // TODO: Move all cards from the dump back to the stock pile
+                if (stockPileDump.IsEmpty) return;
+                
+                RegisterMove(new RecycleStockPileMove(stockPileDump, stockPile));
                 return;
             }
 
@@ -205,11 +198,97 @@ namespace Games.Klondike
             }
 
             var cardToMove = stockPile.TopCard;
-            cardToMove.SetCardFace(CardFace.FaceUp);
-            RegisterMove(new Move(cardToMove, stockPile, stockPileDump, cardToMove.CardFace == CardFace.FaceDown));
-            stockPile.RemoveCard(cardToMove);
-            stockPileDump.AddCard(cardToMove);
+            RegisterMove(new DrawFromStockpileMove(cardToMove, stockPile, stockPileDump));
             ResetSelection();
+        }
+
+        private bool TryCreateMove(CardColumn destinationColumn, out IGameMove move)
+        {
+            move = null;
+            
+            if (selectedCard is null) throw new Exception("No card selected to create a move");
+            if (destinationColumn is null) throw new Exception("No destination selected to create a move");
+            
+            var originColumn = GetCardColumn(selectedCard);
+            var isOriginStockpile = stockPileDump == originColumn;
+            var isOriginTableau = tableauPiles.Contains(originColumn);
+            var isDestinationFoundation = foundationPiles.Contains(destinationColumn);
+            var isDestinationTableau = tableauPiles.Contains(destinationColumn);
+
+            if (isOriginStockpile && isOriginTableau)
+            {
+                Debug.LogError("Origin pile cannot be both a stock pile and a tableau pile at the same time");
+                return false;
+            }
+            
+            if (!isOriginStockpile && !isOriginTableau)
+            {
+                Debug.Log($"Cannot move {selectedCard} because its origin is not a tableau or a stock pile");
+                return false;
+            }
+            
+            if (isDestinationFoundation && isDestinationTableau)
+            {
+                Debug.LogError($"{destinationColumn} cannot be both a foundation and a tableau pile");
+                return false;
+            }
+
+            if (!isDestinationFoundation && !isDestinationTableau)
+            {
+                Debug.Log($"Cannot move {selectedCard} to this pile because it's not a tableau or a foundation");
+                return false;
+            }
+
+            if (isDestinationFoundation && !gameRules.CanMoveToFoundation(selectedCard, destinationColumn))
+            {
+                Debug.Log($"Cannot move {selectedCard} to foundation pile with top card {destinationColumn.TopCard}");
+                return false;
+            }
+
+            if (isDestinationTableau && !gameRules.CanMoveToTableau(selectedCard, destinationColumn))
+            {
+                Debug.Log($"Cannot move {selectedCard} to tableau pile with top card {destinationColumn.TopCard}");
+                ResetSelection();
+                return false;
+            }
+
+            if (isOriginStockpile && isDestinationTableau)
+            {
+                move = new StockpileToTableauMove(selectedCard, originColumn, destinationColumn, 
+                    selectedCard.CardFace == CardFace.FaceDown);
+            }
+            else if (isOriginStockpile)
+            {
+                move = new StockpileToFoundationMove(selectedCard, originColumn, destinationColumn, 
+                    selectedCard.CardFace == CardFace.FaceDown);
+            }
+            else if (isDestinationFoundation)
+            {
+                move = new TableauToFoundationMove(selectedCard, originColumn, destinationColumn, 
+                    selectedCard.CardFace == CardFace.FaceDown);
+            }
+            else
+            {
+                move = new DefaultMove(selectedCard, originColumn, destinationColumn, 
+                    selectedCard.CardFace == CardFace.FaceDown);
+            }
+
+            return true;
+        }
+        
+        private void OnCardFaceChanged(CardFace oldFace, CardFace newFace)
+        {
+            if (gameStartTime == 0) return;
+
+            switch (oldFace)
+            {
+                case CardFace.FaceDown when newFace == CardFace.FaceUp:
+                    AddScore(5);
+                    break;
+                case CardFace.FaceUp when newFace == CardFace.FaceDown:
+                    AddScore(-5);
+                    break;
+            }
         }
 
         private IEnumerator CreateGameplayScreen()
@@ -237,9 +316,7 @@ namespace Games.Klondike
         private void OnUndoMoveClicked()
         {
             if (moves.Count <= 0) return;
-            
-            var lastMove = moves.Pop();
-            lastMove.Undo();
+            UndoLastMove();
         }
 
         private CardColumn GetCardColumn(Card card)
@@ -252,14 +329,43 @@ namespace Games.Klondike
             throw new Exception($"{card} was not found in any pile");
         }
 
-        private void RegisterMove(Move move)
+        private void RegisterMove(IGameMove move)
         {
             moves.Push(move);
+            move.Execute();
+            AddScore(move.Score);
+            gameplayScreen.SetMoveCount(moves.Count);
+        }
+        
+        private void UndoLastMove()
+        {
+            var move = moves.Pop();
+            move.Undo();
+            AddScore(-move.Score);
+            gameplayScreen.SetMoveCount(moves.Count);
         }
         
         private void ResetSelection()
         {
             selectedCard = null;
+        }
+        
+        private async void StartTimer()
+        {
+            gameStartTime = Time.unscaledTime;
+            
+            while (true)
+            {
+                var elapsedTime = Time.unscaledTime - gameStartTime;
+                gameplayScreen.SetTime(elapsedTime);
+                await Task.Delay(1000);
+            }
+        }
+
+        private void AddScore(int scoreToAdd)
+        {
+            score += scoreToAdd;
+            gameplayScreen.SetScore(score);
         }
     }
 }
