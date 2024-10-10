@@ -1,0 +1,5 @@
+.main-menu-button {
+    height: 10%;
+    width: 50%;
+    font-size: 100px;
+}

@@ -1,5 +1,7 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
-    <ui:VisualElement style="flex-grow: 1; justify-content: center; align-self: auto; align-items: center; -unity-font-definition: url(&quot;project://database/Assets/Fonts/Bebas_Neue/BebasNeue-Regular%20SDF%201.asset?fileID=11400000&amp;guid=fe23304b411887442ac1189e2d2cd300&amp;type=2#BebasNeue-Regular SDF 1&quot;); font-size: 72px; -unity-text-align: middle-center; background-color: rgb(0, 0, 0); transition-duration: 0.5s; transition-timing-function: ease-in; transition-property: opacity;">
-        <ui:Label tabindex="-1" text="Now loading..." parse-escape-sequences="true" display-tooltip-when-elided="true" style="width: 100%; font-size: 180px; -unity-text-align: middle-center; -unity-font-style: normal; color: rgb(255, 255, 255);" />
+    <Style src="project://database/Assets/UI%20Toolkit/USSs/ClassicSolitaireScreen.uss?fileID=7433441132597879392&amp;guid=24ede0bcbd1b08246998ac1aa6d62254&amp;type=3#ClassicSolitaireScreen" />
+    <Style src="project://database/Assets/UI%20Toolkit/USSs/USS_LoadingScreen.uss?fileID=7433441132597879392&amp;guid=bf667483348a0084a86e2baf9ca09754&amp;type=3#USS_LoadingScreen" />
+    <ui:VisualElement class="background column">
+        <ui:Label tabindex="-1" text="Now loading..." parse-escape-sequences="true" display-tooltip-when-elided="true" class="loading-title" />
     </ui:VisualElement>
 </ui:UXML>
