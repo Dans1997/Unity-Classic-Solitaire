@@ -17,14 +17,35 @@
                 </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>
-        <ui:VisualElement name="card-container" class="middle-container row">
-            <ui:VisualElement name="card-column-0" class="card-column column" style="flex-grow: 1;" />
-            <ui:VisualElement name="card-column-1" class="card-column column" style="flex-grow: 1;" />
-            <ui:VisualElement name="card-column-2" class="card-column column" style="flex-grow: 1;" />
-            <ui:VisualElement name="card-column-3" class="card-column column" style="flex-grow: 1;" />
-            <ui:VisualElement name="card-column-4" class="card-column column" style="flex-grow: 1;" />
-            <ui:VisualElement name="card-column-5" class="card-column column" style="flex-grow: 1;" />
-            <ui:VisualElement name="card-column-6" class="card-column column" style="flex-grow: 1;" />
+        <ui:VisualElement name="game-board" class="middle-container column">
+            <ui:VisualElement name="board-top-container" class="row board-top-container">
+                <ui:VisualElement name="stock-pile" class="card-column column">
+                    <ui:VisualElement class="card-column-background" />
+                </ui:VisualElement>
+                <ui:VisualElement name="empty-column" class="card-column column" />
+                <ui:VisualElement name="empty-column" class="card-column column" />
+                <ui:VisualElement name="foundations-0" class="card-column column">
+                    <ui:VisualElement class="card-column-background" />
+                </ui:VisualElement>
+                <ui:VisualElement name="foundations-1" class="card-column column">
+                    <ui:VisualElement class="card-column-background" />
+                </ui:VisualElement>
+                <ui:VisualElement name="foundations-2" class="card-column column">
+                    <ui:VisualElement class="card-column-background" />
+                </ui:VisualElement>
+                <ui:VisualElement name="foundations-3" class="card-column column">
+                    <ui:VisualElement class="card-column-background" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement name="board-bottom-container" class="row">
+                <ui:VisualElement name="card-column-0" class="card-column column" />
+                <ui:VisualElement name="card-column-1" class="card-column column" />
+                <ui:VisualElement name="card-column-2" class="card-column column" />
+                <ui:VisualElement name="card-column-3" class="card-column column" />
+                <ui:VisualElement name="card-column-4" class="card-column column" />
+                <ui:VisualElement name="card-column-5" class="card-column column" />
+                <ui:VisualElement name="card-column-6" class="card-column column" />
+            </ui:VisualElement>
         </ui:VisualElement>
         <ui:VisualElement class="bottom-container">
             <ui:VisualElement class="buttons-container row" style="flex-grow: 1;">

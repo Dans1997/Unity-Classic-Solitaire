@@ -18,7 +18,7 @@ namespace Cards
         private Sprite faceUpSprite;
         private Sprite faceDownSprite;
 
-        public Card(CardType cardType, string faceDownSpriteKey)
+        public Card(CardType cardType, string faceDownSpriteKey, float heightPercentage)
         {
             CardType = cardType;
             this.faceDownSpriteKey = faceDownSpriteKey;
@@ -27,6 +27,7 @@ namespace Cards
             Add(cardImage);
 
             AddToClassList("card");
+            style.height = new StyleLength(Length.Percent(heightPercentage));
             clicked += () => CardClicked?.Invoke(this);
         }
         

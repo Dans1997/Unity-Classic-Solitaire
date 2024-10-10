@@ -16,6 +16,8 @@ namespace Games.Modes
         private readonly Stack<string> moves;
         private readonly string gameplayScreenPrefabKey;
         private IGameplayScreen gameplayScreen;
+        private CardColumn stockPile;
+        private CardColumn[] foundations;
         private CardColumn[] cardColumns;
         private Card[] cards;
 
@@ -35,16 +37,26 @@ namespace Games.Modes
             gameplayScreen.UndoButtonClicked += OnUndoMoveClicked;
 
             yield return gameplayScreen.Show();
+
+            stockPile = new CardColumn(gameplayScreen.FindColumn("stock-pile"), 24, -150f);
+
+            foundations = new[]
+            {
+                new CardColumn(gameplayScreen.FindColumn("foundations-0"), 13, -150f),
+                new CardColumn(gameplayScreen.FindColumn("foundations-1"), 13, -150f),
+                new CardColumn(gameplayScreen.FindColumn("foundations-2"), 13, -150f),
+                new CardColumn(gameplayScreen.FindColumn("foundations-3"), 13, -150f),
+            };
             
             cardColumns = new []
             {
-                new CardColumn(1, gameplayScreen.FindColumn("card-column-0")),
-                new CardColumn(2, gameplayScreen.FindColumn("card-column-1")),
-                new CardColumn(3, gameplayScreen.FindColumn("card-column-2")),
-                new CardColumn(4, gameplayScreen.FindColumn("card-column-3")),
-                new CardColumn(5, gameplayScreen.FindColumn("card-column-4")),
-                new CardColumn(6, gameplayScreen.FindColumn("card-column-5")),
-                new CardColumn(7, gameplayScreen.FindColumn("card-column-6"))
+                new CardColumn(gameplayScreen.FindColumn("card-column-0"), marginTopPercentage: -100f),
+                new CardColumn(gameplayScreen.FindColumn("card-column-1"), marginTopPercentage: -100f),
+                new CardColumn(gameplayScreen.FindColumn("card-column-2"), marginTopPercentage: -100f),
+                new CardColumn(gameplayScreen.FindColumn("card-column-3"), marginTopPercentage: -100f),
+                new CardColumn(gameplayScreen.FindColumn("card-column-4"), marginTopPercentage: -100f),
+                new CardColumn(gameplayScreen.FindColumn("card-column-5"), marginTopPercentage: -100f),
+                new CardColumn(gameplayScreen.FindColumn("card-column-6"), marginTopPercentage: -100f)
             };
             
             var deck = Enum.GetValues(typeof(CardType)).Cast<CardType>().ToList();
@@ -55,13 +67,24 @@ namespace Games.Modes
             {
                 for (var cardIndex = 0; cardIndex <= columnIndex; cardIndex++)
                 {
-                    var card = new Card(shuffledDeck[0], Constants.ClassicSolitaireFaceDownSpriteKey);
+                    var card = new Card(shuffledDeck[0], Constants.ClassicSolitaireFaceDownSpriteKey, 17f);
                     yield return card.LoadCardSprites();
 
                     card.CardClicked += OnCardClicked;
                     shuffledDeck.RemoveAt(0);
                     cardColumns[columnIndex].AddCard(card);
                 }
+            }
+
+            var stockPileCount = shuffledDeck.Count;
+            for (var i = 0; i < stockPileCount; i++)
+            {
+                var card = new Card(shuffledDeck[0], Constants.ClassicSolitaireFaceDownSpriteKey, 75f);
+                yield return card.LoadCardSprites();
+                
+                shuffledDeck.RemoveAt(0);
+                stockPile.AddCard(card);
+                card.SetCardFace(CardFace.FaceDown);
             }
 
             foreach (var cardColumn in cardColumns)
@@ -82,6 +105,8 @@ namespace Games.Modes
         
         private void OnCardClicked(Card clickedCard)
         {
+            if (clickedCard.CardFace == CardFace.FaceDown) return;
+            
             Debug.Log($"{clickedCard.CardType} was clicked");
         }
         

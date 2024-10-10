@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using Cards;
 using Interfaces;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -24,7 +23,6 @@ namespace Screens
         private Label scoreLabel;
         private Label timeLabel;
         private Label movesLabel;
-        private VisualElement cardContainer;
         
         public IEnumerator Show()
         {
@@ -91,11 +89,6 @@ namespace Screens
             {
                 movesLabel = rootElement.Q<Label>("moves-label");
                 movesLabel.text = "0";
-            }
-
-            if (cardContainer is null)
-            {
-                cardContainer = rootElement.Q<Label>("card-container");
             }
 
             yield break;
