@@ -8,6 +8,7 @@ using Interfaces;
 using Moves;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.UIElements;
 using Utils;
 using Random = System.Random;
 
@@ -55,6 +56,11 @@ namespace Games.Klondike
                 new CardColumn(gameplayScreen.FindColumn("foundations-2"), 13, -150f),
                 new CardColumn(gameplayScreen.FindColumn("foundations-3"), 13, -150f),
             };
+
+            foreach (var foundationPile in foundationPiles)
+            {
+                foundationPile.CardColumnClicked += OnFoundationPileClicked;
+            }
             
             tableauPiles = new []
             {
@@ -134,12 +140,35 @@ namespace Games.Klondike
                 RegisterMove(new Move(selectedCard, originColumn, destinationColumn, clickedCard.CardFace == CardFace.FaceDown));
                 originColumn.RemoveCard(selectedCard);
                 destinationColumn.AddCard(selectedCard);
+                selectedCard.SetHeightPercentage(75f);
+                selectedCard.pickingMode = PickingMode.Ignore;
                 ResetSelection();
                 return;
             }
 
             selectedCard ??= clickedCard;
             Debug.Log($"{selectedCard} was selected");
+        }
+        
+        private void OnFoundationPileClicked(CardColumn clickedFoundationPile)
+        {
+            if (selectedCard is null)
+            {
+                Debug.Log($"{clickedFoundationPile} was clicked, but no card is selected");
+                return;
+            }
+
+            if (!foundationPiles.Contains(clickedFoundationPile))
+            {
+                Debug.LogError($"{clickedFoundationPile} is not a foundation pile");
+                return;
+            }
+            
+            var originColumn = GetCardColumn(selectedCard);
+            RegisterMove(new Move(selectedCard, originColumn, clickedFoundationPile, selectedCard.CardFace == CardFace.FaceDown));
+            originColumn.RemoveCard(selectedCard);
+            clickedFoundationPile.AddCard(selectedCard);
+            ResetSelection();
         }
 
         private IEnumerator CreateGameplayScreen()

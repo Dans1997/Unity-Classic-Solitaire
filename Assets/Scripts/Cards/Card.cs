@@ -21,7 +21,7 @@ namespace Cards
         private Sprite faceUpSprite;
         private Sprite faceDownSprite;
 
-        public Card(CardType cardType, string faceDownSpriteKey, float heightPercentage)
+        public Card(CardType cardType, string faceDownSpriteKey, float initialHeight)
         {
             CardType = cardType;
             Rank = CardUtils.GetCardRank(cardType);
@@ -32,7 +32,7 @@ namespace Cards
             Add(cardImage);
 
             AddToClassList("card");
-            style.height = new StyleLength(Length.Percent(heightPercentage));
+            SetHeightPercentage(initialHeight);
             clicked += () => CardClicked?.Invoke(this);
         }
         
@@ -60,6 +60,11 @@ namespace Cards
         public override string ToString()
         {
             return $"{CardType}";
+        }
+
+        public void SetHeightPercentage(float heightPercentage)
+        {
+            style.height = new StyleLength(Length.Percent(heightPercentage));
         }
     }
 }

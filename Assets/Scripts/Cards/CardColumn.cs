@@ -8,6 +8,8 @@ namespace Cards
 {
     public class CardColumn : VisualElement
     {
+        public event Action<CardColumn> CardColumnClicked;
+        
         private readonly Stack<Card> cardStack;
         private readonly int capacity;
         private readonly float marginTopPercentage;
@@ -23,6 +25,7 @@ namespace Cards
             this.capacity = capacity;
             this.marginTopPercentage = marginTopPercentage;
             this.columnContainer = columnContainer;
+            columnContainer.RegisterCallback<ClickEvent>(evt => CardColumnClicked?.Invoke(this));
         }
         
         public void AddCard(Card card)
@@ -43,7 +46,7 @@ namespace Cards
             if (!ContainsCard(card)) throw new Exception($"{card} does not belong to this pile ({columnContainer.name})");
             cardStack.Pop();
             columnContainer.Remove(card);
-            TopCard.SetCardFace(CardFace.FaceUp);
+            TopCard?.SetCardFace(CardFace.FaceUp);
         }
     }
 }
