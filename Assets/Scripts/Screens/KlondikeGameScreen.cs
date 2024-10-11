@@ -7,7 +7,7 @@ using Utils;
 
 namespace Screens
 {
-    public class ClassicSolitaireScreen : MonoBehaviour, IGameplayScreen
+    public class KlondikeGameScreen : MonoBehaviour, IGameplayScreen
     {
         public event Action SettingsButtonClicked;
         public event Action ExitButtonClicked;

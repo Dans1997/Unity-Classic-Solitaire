@@ -7,6 +7,7 @@ using Cards;
 using Enums;
 using Interfaces;
 using Moves;
+using Screens;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
@@ -26,7 +27,7 @@ namespace Games.Klondike
         private readonly Stack<IGameMove> moves;
         private readonly ITimer timer;
         private readonly IScreen pauseScreen;
-        private readonly string gameplayScreenPrefabKey;
+        private readonly string screenPrefabKey;
         private IGameplayScreen gameplayScreen;
         private CardColumn stockPile;
         private CardColumn stockPileDump;
@@ -38,10 +39,10 @@ namespace Games.Klondike
         private List<Card> selectedCards;
         private Dictionary<CardType, IResourceLocation> cardResourceLocations;
 
-        public KlondikeGameMode(ITimer timer, string gameplayScreenPrefabKey)
+        public KlondikeGameMode(ITimer timer, string screenPrefabKey)
         {
             this.timer = timer;
-            this.gameplayScreenPrefabKey = gameplayScreenPrefabKey;
+            this.screenPrefabKey = screenPrefabKey;
             
             gameRules = new KlondikeGameRules();
             moves = new Stack<IGameMove>();
@@ -58,14 +59,14 @@ namespace Games.Klondike
         public IEnumerator DealCards()
         {
             yield return PreloadCardResourceLocations();
-            yield return CreateGameplayScreen();
-            
-            gameplayScreen.SettingsButtonClicked += OnOptionsButtonClicked;
-            gameplayScreen.ExitButtonClicked += OnExitButtonClicked;
-            gameplayScreen.PauseButtonClicked += () => PauseButtonClicked?.Invoke();
-            gameplayScreen.UndoButtonClicked += OnUndoMoveClicked;
-
-            yield return gameplayScreen.Show();
+            yield return AddressablesUtils.CreateScreen<KlondikeGameScreen>(screenPrefabKey, screen =>
+            {
+                screen.SettingsButtonClicked += OnOptionsButtonClicked;
+                screen.ExitButtonClicked += OnExitButtonClicked;
+                screen.PauseButtonClicked += () => PauseButtonClicked?.Invoke();
+                screen.UndoButtonClicked += OnUndoMoveClicked;
+                gameplayScreen = screen;
+            });
 
             stockPile = new CardColumn(gameplayScreen.FindColumn("stock-pile"), 24, 70f, -140f, false);
             stockPileDump = new CardColumn(gameplayScreen.FindColumn("stock-pile-dump"), 24, 70f, -140f, false);
@@ -101,8 +102,8 @@ namespace Games.Klondike
             var deck = Enum.GetValues(typeof(CardType)).Cast<CardType>().ToList();
             var rng = new Random();
             var shuffledDeck = deck.OrderBy(_ => rng.Next()).ToList();
-            var columnsCount = 7;
-            for (var columnIndex = 0; columnIndex < columnsCount; columnIndex++)
+
+            for (var columnIndex = 0; columnIndex < gameRules.ColumnCount; columnIndex++)
             {
                 for (var cardIndex = 0; cardIndex <= columnIndex; cardIndex++)
                 {
@@ -296,13 +297,6 @@ namespace Games.Klondike
                     AddScore(-5);
                     break;
             }
-        }
-
-        private IEnumerator CreateGameplayScreen()
-        {
-            var handle = Addressables.InstantiateAsync(gameplayScreenPrefabKey);
-            yield return handle;
-            gameplayScreen = handle.Result.GetComponent<IGameplayScreen>();
         }
         
         private void OnOptionsButtonClicked()

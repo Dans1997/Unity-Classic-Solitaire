@@ -6,81 +6,64 @@ using Scenes;
 using Screens;
 using Timers;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
+using UnityEngine.SceneManagement;
 using Utils;
 
 namespace Containers
 {
     public class GameStateContainer : MonoBehaviour
     {
+        private SceneLoader sceneLoader;
         private IScreen loadingScreen;
         private IScreen mainMenuScreen;
         private IScreen pauseScreen;
         private IGameResultsScreen endCardScreen;
-        private SceneLoader sceneLoader;
+
+        private void Awake()
+        {
+            sceneLoader = new SceneLoader(SceneManager.GetActiveScene());
+        }
 
         private IEnumerator Start()
         {
             yield return AddressablesUtils.InitializeAddressables();
-            yield return CreateLoadingScreen();
-            yield return CreateMainMenuScreen();
-            yield return CreatePauseScreen();
-            yield return CreateEndCardScreen();
-            yield return loadingScreen.Hide();
             
-            sceneLoader = new SceneLoader(loadingScreen);
-        }
-        
-        private IEnumerator CreateLoadingScreen()
-        {
-            var handle = Addressables.InstantiateAsync(Constants.LoadingScreenPrefabKey);
-            yield return handle;
-            loadingScreen = handle.Result.GetComponent<IScreen>();
-        }
-        
-        private IEnumerator CreateMainMenuScreen()
-        {
-            var handle = Addressables.InstantiateAsync(Constants.MainMenuScreenPrefabKey);
-            yield return handle;
+            yield return AddressablesUtils.CreateScreen<LoadingScreen>(Constants.LoadingScreenPrefabKey, screen =>
+            {
+                loadingScreen = screen;
+            });
             
-            var mainMenu = handle.Result.GetComponent<MainMenuScreen>();
-            mainMenu.PlayButtonClicked += OnPlayButtonClicked;
-            mainMenu.OptionsButtonClicked += OnOptionsButtonClicked;
-            mainMenu.ExitButtonClicked += OnExitButtonClicked;
-            mainMenuScreen = mainMenu;
+            yield return AddressablesUtils.CreateScreen<MainMenuScreen>(Constants.MainMenuScreenPrefabKey, screen =>
+            {
+                screen.PlayButtonClicked += OnPlayButtonClicked;
+                screen.OptionsButtonClicked += OnOptionsButtonClicked;
+                screen.ExitButtonClicked += OnExitButtonClicked;
+                mainMenuScreen = screen;
+            });
             
-            yield return mainMenuScreen.Show();
-        }
-        
-        private IEnumerator CreatePauseScreen()
-        {
-            var handle = Addressables.InstantiateAsync(Constants.PauseScreenPrefabKey);
-            yield return handle;
-            var pause = handle.Result.GetComponent<PauseScreen>();
-            pause.ResumeButtonClicked += OnResumeButtonClicked;
+            yield return AddressablesUtils.CreateScreen<PauseScreen>(Constants.PauseScreenPrefabKey, screen => 
+            {
+                screen.ResumeButtonClicked += OnResumeButtonClicked;
+                pauseScreen = screen;
+            });
             
-            pauseScreen = pause;
-            yield return pauseScreen.Show();
-            yield return pauseScreen.Hide();
-        }
+            yield return AddressablesUtils.CreateScreen<EndCardScreen>(Constants.EndCardScreenPrefabKey, screen => 
+            {
+                screen.ContinueButtonClicked += OnEndCardContinueButtonClicked;
+                endCardScreen = screen;
+            });
 
-        private IEnumerator CreateEndCardScreen()
-        {
-            var handle = Addressables.InstantiateAsync(Constants.EndCardScreenPrefabKey);
-            yield return handle;
-            var endCard = handle.Result.GetComponent<EndCardScreen>();
-            endCard.ContinueButtonClicked += OnEndCardContinueButtonClicked;
-            
-            endCardScreen = endCard;
-            yield return endCardScreen.Show();
             yield return endCardScreen.Hide();
+            yield return pauseScreen.Hide();
+            yield return mainMenuScreen.Show();
+            yield return loadingScreen.Hide();
         }
 
-        private IEnumerator LoadGameMode(GameMode gameMode)
+        private IEnumerator LoadSelectedGameMode(GameMode gameMode)
         {
-            yield return mainMenuScreen.Hide();
             yield return loadingScreen.Show();
-            yield return sceneLoader.LoadScene(Constants.GameplaySceneKey);
+            yield return mainMenuScreen.Hide();
+            yield return sceneLoader.LoadSceneAsync(Constants.GameplaySceneKey);
             var gameModeController = gameMode switch
             {
                 GameMode.Klondike => new KlondikeGameMode(new CoroutineTimer(this), 
@@ -96,9 +79,30 @@ namespace Containers
             gameModeController.StartGame();
         }
 
+        private IEnumerator UnloadSelectedGameMode(IGameResults gameResults)
+        {
+            Debug.Log($"Game finished with results: {gameResults}");
+            
+            endCardScreen.SetGameResultLabel($"You {gameResults.GameOutcome}!");
+            endCardScreen.SetScoreLabel(gameResults.Score);
+            endCardScreen.SetTimeLabel(gameResults.TimeTaken);
+            endCardScreen.SetTotalMovesLabel(gameResults.TotalMoves);
+            
+            yield return sceneLoader.UnloadSceneAsync();
+            yield return endCardScreen.Show();
+        }
+        
+        private IEnumerator LoadMainMenu()
+        {
+            yield return loadingScreen.Show();
+            yield return endCardScreen.Hide();
+            yield return mainMenuScreen.Show();
+            yield return loadingScreen.Hide();
+        }
+
         private void OnPlayButtonClicked()
         {
-            StartCoroutine(LoadGameMode(GameMode.Klondike));
+            StartCoroutine(LoadSelectedGameMode(GameMode.Klondike));
         }
         
         private void OnPauseButtonClicked()
@@ -115,28 +119,12 @@ namespace Containers
 
         private void OnGameFinished(IGameResults gameResults)
         {
-            Debug.Log($"Game finished with results: {gameResults}");
-            
-            endCardScreen.SetGameResultLabel($"You {gameResults.GameOutcome}!");
-            endCardScreen.SetScoreLabel(gameResults.Score);
-            endCardScreen.SetTimeLabel(gameResults.TimeTaken);
-            endCardScreen.SetTotalMovesLabel(gameResults.TotalMoves);
-            
-            StartCoroutine(endCardScreen.Show());
+            StartCoroutine(UnloadSelectedGameMode(gameResults));
         }
         
         private void OnEndCardContinueButtonClicked()
         {
-            StartCoroutine(GoBackToMainMenu());
-            return;
-            
-            IEnumerator GoBackToMainMenu()
-            {
-                yield return loadingScreen.Show();
-                yield return endCardScreen.Hide();
-                yield return mainMenuScreen.Show();
-                yield return loadingScreen.Hide();
-            }
+            StartCoroutine(LoadMainMenu());
         }
 
         private void OnOptionsButtonClicked()

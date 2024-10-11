@@ -9,6 +9,8 @@ namespace Games.Klondike
 {
     public class KlondikeGameRules : IGameRules
     {
+        public int ColumnCount => 7;
+
         public bool CanMoveToFoundation(Card cardToMove, CardColumn foundation)
         {
             if (cardToMove is null) throw new ArgumentNullException(nameof(cardToMove));

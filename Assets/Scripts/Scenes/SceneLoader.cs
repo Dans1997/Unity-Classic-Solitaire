@@ -1,5 +1,4 @@
 using System.Collections;
-using Interfaces;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.ResourceManagement.ResourceProviders;
@@ -9,27 +8,25 @@ namespace Scenes
 {
     public class SceneLoader
     {
-        private readonly IScreen loadingScreen;
+        private readonly Scene gameStateScene;
         private AsyncOperationHandle<SceneInstance> handle;
 
-        public SceneLoader(IScreen loadingScreen)
+        public SceneLoader(Scene gameStateScene)
         {
-            this.loadingScreen = loadingScreen;
+            this.gameStateScene = gameStateScene;
         }
         
-        public IEnumerator LoadScene(string sceneKey)
+        public IEnumerator LoadSceneAsync(string sceneKey)
         {
-            yield return loadingScreen.Show();
             handle = Addressables.LoadSceneAsync(sceneKey, LoadSceneMode.Additive);
             yield return handle;
-            yield return loadingScreen.Hide();
+            SceneManager.SetActiveScene(handle.Result.Scene);
         }
 
-        public IEnumerator UnloadScene()
+        public IEnumerator UnloadSceneAsync()
         {
-            yield return loadingScreen.Show();
             yield return Addressables.UnloadSceneAsync(handle.Result);
-            yield return loadingScreen.Hide();
+            SceneManager.SetActiveScene(gameStateScene);
         }
     }
 }
