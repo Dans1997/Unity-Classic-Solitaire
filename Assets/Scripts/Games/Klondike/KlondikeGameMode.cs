@@ -62,9 +62,9 @@ namespace Games.Klondike
             yield return AddressablesUtils.CreateScreen<KlondikeGameScreen>(screenPrefabKey, screen =>
             {
                 screen.SettingsButtonClicked += OnOptionsButtonClicked;
-                screen.ExitButtonClicked += OnExitButtonClicked;
+                screen.ExitButtonClicked += () => FinishGame(GameOutcome.Lose);
                 screen.PauseButtonClicked += () => PauseButtonClicked?.Invoke();
-                screen.UndoButtonClicked += OnUndoMoveClicked;
+                screen.UndoButtonClicked += UndoLastMove;
                 gameplayScreen = screen;
             });
 
@@ -304,17 +304,6 @@ namespace Games.Klondike
             throw new System.NotImplementedException();
         }
 
-        private void OnExitButtonClicked()
-        {
-            FinishGame(GameOutcome.Lose);
-        }
-
-        private void OnUndoMoveClicked()
-        {
-            if (moves.Count <= 0) return;
-            UndoLastMove();
-        }
-
         private CardColumn GetCardOriginPile(Card card)
         {
             if (stockPile.ContainsCard(card)) return stockPile;
@@ -342,6 +331,8 @@ namespace Games.Klondike
 
         private void UndoLastMove()
         {
+            if (moves.Count <= 0) return;
+            
             var move = moves.Pop();
             move.Undo();
             AddScore(-move.Score);

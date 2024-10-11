@@ -15,7 +15,7 @@ namespace Games.Klondike
         {
             if (cardToMove is null) throw new ArgumentNullException(nameof(cardToMove));
             if (foundation is null) throw new ArgumentNullException(nameof(foundation));
-            if (foundation.TopCard == null) return cardToMove.Rank == CardRank.Ace;
+            if (foundation.IsEmpty) return cardToMove.Rank == CardRank.Ace;
             
             var topCard = foundation.TopCard;
             return cardToMove.Suit == topCard.Suit && cardToMove.Rank == topCard.Rank + 1;
@@ -25,8 +25,8 @@ namespace Games.Klondike
         {
             if (cardToMove is null) throw new ArgumentNullException(nameof(cardToMove));
             if (tableau is null) throw new ArgumentNullException(nameof(tableau));
-            if (tableau.TopCard == null && cardToMove.Rank == CardRank.King) return true;
-
+            if (tableau.IsEmpty && cardToMove.Rank == CardRank.King) return true;
+            
             var topCard = tableau.TopCard;
             return topCard != null && CardUtils.IsOppositeColor(cardToMove, topCard) && cardToMove.Rank == topCard.Rank + 1;
         }
@@ -60,7 +60,7 @@ namespace Games.Klondike
             foreach (var tableau in tableauPiles)
             {
                 var tableauTopCard = tableau.TopCard;
-                if (tableauTopCard == null) continue;
+                if (tableau.IsEmpty) continue;
                 
                 if (foundationPiles.Any(foundation => CanMoveToFoundation(tableauTopCard, foundation)))
                 {

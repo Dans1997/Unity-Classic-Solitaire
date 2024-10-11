@@ -38,11 +38,7 @@ namespace Cards
         
         public void AddCard(Card card)
         {
-            if (CardStack.Count >= capacity)
-            {
-                Debug.LogError("Card stack is at capacity");
-                return;
-            }
+            if (CardStack.Count >= capacity) throw new Exception("Card stack is at capacity");
             
             card.SetHeightPercentage(cardHeightPercentage);
             card.style.marginTop = CardStack.Count == 0 ? 0 : Length.Percent(marginTopPercentage);
