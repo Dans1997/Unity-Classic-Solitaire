@@ -1,5 +1,5 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
-    <Style src="project://database/Assets/UI%20Toolkit/USSs/ClassicSolitaireScreen.uss?fileID=7433441132597879392&amp;guid=24ede0bcbd1b08246998ac1aa6d62254&amp;type=3#ClassicSolitaireScreen" />
+    <Style src="project://database/Assets/UI%20Toolkit/USSs/USS_ClassicSolitaireScreen.uss?fileID=7433441132597879392&amp;guid=24ede0bcbd1b08246998ac1aa6d62254&amp;type=3#USS_ClassicSolitaireScreen" />
     <ui:VisualElement class="background column">
         <ui:VisualElement class="top-container">
             <ui:VisualElement class="analytics-container row" style="flex-grow: 1;">
@@ -48,7 +48,7 @@
             </ui:VisualElement>
         </ui:VisualElement>
         <ui:VisualElement class="bottom-container">
-            <ui:VisualElement class="buttons-container row" style="flex-grow: 1;">
+            <ui:VisualElement class="buttons-container row">
                 <ui:Button text="Settings" parse-escape-sequences="true" display-tooltip-when-elided="true" name="settings-button" class="gameplay-button" />
                 <ui:Button text="Exit" parse-escape-sequences="true" display-tooltip-when-elided="true" name="exit-button" class="gameplay-button" />
                 <ui:Button text="Pause" parse-escape-sequences="true" display-tooltip-when-elided="true" name="pause-button" class="gameplay-button" />
