@@ -1,82 +1,89 @@
-using System.Collections.Generic;
 using System.Linq;
-using Enums;
+using GameAnalytics.CustomEvents;
 using Interfaces;
+using Unity.Services.Analytics;
 using UnityEngine;
-using UnityEngine.Analytics;
 
 namespace GameAnalytics
 {
     public class UserDataTracker : IUserDataTracker
     {
-        public UserDataTracker()
+        public UserDataTracker(bool userConsented)
         {
-            Analytics.enabled = true;
-            Analytics.initializeOnStartup = true;
-            Analytics.deviceStatsEnabled = true;
+            if (!userConsented)
+            {
+                Debug.LogWarning("User did not consent to data tracking");
+                return;
+            }
+            
+            AnalyticsService.Instance.StartDataCollection();
         }
         
         public void TrackGameStart(float gameStartTime)
         {
-            Analytics.CustomEvent(CustomAnalyticsEvent.GameStart.ToString(), new Dictionary<string, object>
+            var gameStartEvent = new GameStartEvent
             {
-                { "start_time", gameStartTime }
-            });
+                StartTime = gameStartTime
+            };
+            AnalyticsService.Instance.RecordEvent(gameStartEvent);
         }
 
         public void TrackGameEnd(IGameResults gameResults)
         {
-            Analytics.CustomEvent(CustomAnalyticsEvent.GameEnd.ToString(), new Dictionary<string, object>
+            var gameEndEvent = new GameEndEvent
             {
-                { "game_outcome", gameResults.GameOutcome.ToString() },
-                { "time_taken", gameResults.TimeTaken },
-                { "score", gameResults.Score },
-                { "total_moves", gameResults.TotalMoves },
-                { "date_played", gameResults.DatePlayed.ToString("o") }
-            });
+                GameOutcome = gameResults.GameOutcome.ToString(),
+                TimeTaken = gameResults.TimeTaken,
+                Score = gameResults.Score,
+                TotalMoves = gameResults.TotalMoves,
+                DatePlayed = gameResults.DatePlayed.ToString("o")
+            };
+            AnalyticsService.Instance.RecordEvent(gameEndEvent);
         }
-        
+
         public void TrackCardMove(IGameMode gameMode, IGameMove gameMove, int moveNumber)
         {
             var cards = gameMove.Cards?.Select(card => card.CardType.ToString());
             var cardTypes = cards is not null ? string.Join(",", cards) : "";
             
-            Analytics.CustomEvent(CustomAnalyticsEvent.CardMove.ToString(), new Dictionary<string, object>
+            var cardMoveEvent = new CardMoveEvent
             {
-                { "game_mode", gameMode.GameMode.ToString() },
-                { "cards", cardTypes },
-                { "from", gameMove.Origin.name },
-                { "to", gameMove.Destination.name },
-                { "move_number", moveNumber },
-                { "time_since_game_start", Time.time - gameMode.GameStartTime }
-            });
+                GameMode = gameMode.GameMode.ToString(),
+                Cards = cardTypes,
+                From = gameMove.Origin.PileType.ToString(),
+                To = gameMove.Destination.PileType.ToString(),
+                MoveNumber = moveNumber,
+                TimeSinceGameStart = Time.time - gameMode.GameStartTime
+            };
+            AnalyticsService.Instance.RecordEvent(cardMoveEvent);
         }
-        
+
         public void TrackUndoMove(IGameMode gameMode, IGameMove gameMove, int moveNumber)
         {
             var cards = gameMove.Cards?.Select(card => card.CardType.ToString());
             var cardTypes = cards is not null ? string.Join(",", cards) : "";
             
-            Analytics.CustomEvent(CustomAnalyticsEvent.UndoMove.ToString(), new Dictionary<string, object>
+            var undoMoveEvent = new UndoMoveEvent
             {
-                { "game_mode", gameMode.GameMode.ToString() },
-                { "move_name", gameMove.GetType().ToString() },
-                { "cards", cardTypes },
-                { "from", gameMove.Origin.name },
-                { "to", gameMove.Destination.name },
-                { "move_number", moveNumber },
-                { "time_since_game_start", Time.time - gameMode.GameStartTime }
-            });
+                GameMode = gameMode.GameMode.ToString(),
+                MoveName = gameMove.GetType().ToString(),
+                Cards = cardTypes,
+                From = gameMove.Origin.PileType.ToString(),
+                To = gameMove.Destination.PileType.ToString(),
+                MoveNumber = moveNumber,
+                TimeSinceGameStart = Time.time - gameMode.GameStartTime
+            };
+            AnalyticsService.Instance.RecordEvent(undoMoveEvent);
         }
-        
-        // TODO:
+
         public void TrackHintUsed(int hintCount, float gameStartTime)
         {
-            Analytics.CustomEvent(CustomAnalyticsEvent.HintUse.ToString(), new Dictionary<string, object>
+            var hintUsedEvent = new HintUseEvent
             {
-                { "hint_count", hintCount },
-                { "time_since_game_start", Time.time - gameStartTime }
-            });
+                HintCount = hintCount,
+                TimeSinceGameStart = Time.time - gameStartTime
+            };
+            AnalyticsService.Instance.RecordEvent(hintUsedEvent);
         }
     }
 }

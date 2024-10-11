@@ -60,6 +60,7 @@ namespace Games.Klondike
             }
         }
         
+        // TODO: Shuffle algorithm to prevent unwinnable games
         public IEnumerator DealCards()
         {
             yield return PreloadCardResourceLocations();
@@ -72,16 +73,16 @@ namespace Games.Klondike
                 gameplayScreen = screen;
             });
 
-            stockPile = new CardColumn(gameplayScreen.FindColumn("stock-pile"), 24, 70f, -140f, false);
-            stockPileDump = new CardColumn(gameplayScreen.FindColumn("stock-pile-dump"), 24, 70f, -140f, false);
+            stockPile = new CardColumn(PileType.StockPile, gameplayScreen.FindColumn("stock-pile"), 24, 70f, -140f, false);
+            stockPileDump = new CardColumn(PileType.StockPile, gameplayScreen.FindColumn("stock-pile-dump"), 24, 70f, -140f, false);
             stockPile.CardColumnClicked += OnStockPileClicked;
 
             foundationPiles = new[]
             {
-                new CardColumn(gameplayScreen.FindColumn("foundations-0"), 13, 70f, -140f),
-                new CardColumn(gameplayScreen.FindColumn("foundations-1"), 13, 70f, -140f),
-                new CardColumn(gameplayScreen.FindColumn("foundations-2"), 13, 70f, -140f),
-                new CardColumn(gameplayScreen.FindColumn("foundations-3"), 13, 70f, -140f),
+                new CardColumn(PileType.FoundationPile, gameplayScreen.FindColumn("foundations-0"), 13, 70f, -140f),
+                new CardColumn(PileType.FoundationPile, gameplayScreen.FindColumn("foundations-1"), 13, 70f, -140f),
+                new CardColumn(PileType.FoundationPile, gameplayScreen.FindColumn("foundations-2"), 13, 70f, -140f),
+                new CardColumn(PileType.FoundationPile, gameplayScreen.FindColumn("foundations-3"), 13, 70f, -140f),
             };
 
             foreach (var foundationPile in foundationPiles)
@@ -91,13 +92,13 @@ namespace Games.Klondike
             
             tableauPiles = new []
             {
-                new CardColumn(gameplayScreen.FindColumn("card-column-0"), cardHeightPercentage: 17f, marginTopPercentage: -100f),
-                new CardColumn(gameplayScreen.FindColumn("card-column-1"), cardHeightPercentage: 17f, marginTopPercentage: -100f),
-                new CardColumn(gameplayScreen.FindColumn("card-column-2"), cardHeightPercentage: 17f, marginTopPercentage: -100f),
-                new CardColumn(gameplayScreen.FindColumn("card-column-3"), cardHeightPercentage: 17f, marginTopPercentage: -100f),
-                new CardColumn(gameplayScreen.FindColumn("card-column-4"), cardHeightPercentage: 17f, marginTopPercentage: -100f),
-                new CardColumn(gameplayScreen.FindColumn("card-column-5"), cardHeightPercentage: 17f, marginTopPercentage: -100f),
-                new CardColumn(gameplayScreen.FindColumn("card-column-6"), cardHeightPercentage: 17f, marginTopPercentage: -100f)
+                new CardColumn(PileType.TableauPile, gameplayScreen.FindColumn("card-column-0"), cardHeightPercentage: 17f, marginTopPercentage: -100f),
+                new CardColumn(PileType.TableauPile, gameplayScreen.FindColumn("card-column-1"), cardHeightPercentage: 17f, marginTopPercentage: -100f),
+                new CardColumn(PileType.TableauPile, gameplayScreen.FindColumn("card-column-2"), cardHeightPercentage: 17f, marginTopPercentage: -100f),
+                new CardColumn(PileType.TableauPile, gameplayScreen.FindColumn("card-column-3"), cardHeightPercentage: 17f, marginTopPercentage: -100f),
+                new CardColumn(PileType.TableauPile, gameplayScreen.FindColumn("card-column-4"), cardHeightPercentage: 17f, marginTopPercentage: -100f),
+                new CardColumn(PileType.TableauPile, gameplayScreen.FindColumn("card-column-5"), cardHeightPercentage: 17f, marginTopPercentage: -100f),
+                new CardColumn(PileType.TableauPile, gameplayScreen.FindColumn("card-column-6"), cardHeightPercentage: 17f, marginTopPercentage: -100f)
             };
             
             var faceDownSpriteHandle = Addressables.LoadAssetAsync<Sprite>(Constants.ClassicSolitaireFaceDownSpriteKey);

@@ -6,6 +6,7 @@ using Interfaces;
 using Scenes;
 using Screens;
 using Timers;
+using Unity.Services.Core;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Utils;
@@ -24,12 +25,14 @@ namespace Containers
         private void Awake()
         {
             sceneLoader = new SceneLoader(SceneManager.GetActiveScene());
-            dataTracker = new UserDataTracker();
         }
 
         private IEnumerator Start()
         {
             yield return AddressablesUtils.InitializeAddressables();
+            yield return UnityServicesUtils.InitializeUnityServices();
+            
+            dataTracker = new UserDataTracker(true); // TODO: Make sure to ask for consent
             
             yield return AddressablesUtils.CreateScreen<LoadingScreen>(Constants.LoadingScreenPrefabKey, screen =>
             {

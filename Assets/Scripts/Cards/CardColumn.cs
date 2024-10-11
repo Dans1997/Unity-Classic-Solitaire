@@ -10,7 +10,9 @@ namespace Cards
     {
         public event Action<CardColumn> CardColumnClicked;
         
+        public readonly PileType PileType;
         public readonly Stack<Card> CardStack;
+        
         private readonly int capacity;
         private readonly float cardHeightPercentage;
         private readonly float marginTopPercentage;
@@ -20,12 +22,13 @@ namespace Cards
         public Card TopCard => CardStack.Count <= 0 ? null : CardStack.Peek();
         public bool IsEmpty => TopCard is null;
         public int CardCount => CardStack.Count;
-        
+
         public bool ContainsCard(Card card) => CardStack.Contains(card);
 
-        public CardColumn(VisualElement columnContainer, int capacity = 13,  float cardHeightPercentage = 17f, 
+        public CardColumn(PileType pileType, VisualElement columnContainer, int capacity = 13,  float cardHeightPercentage = 17f, 
             float marginTopPercentage = 0f, bool setTopCardFaceUpOnRemove = true)
         {
+            PileType = pileType;
             CardStack = new Stack<Card>(capacity);
             this.capacity = capacity;
             this.cardHeightPercentage = cardHeightPercentage;
