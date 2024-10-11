@@ -21,6 +21,7 @@ namespace Containers
 
         private IEnumerator Start()
         {
+            yield return AddressablesUtils.InitializeAddressables();
             yield return CreateLoadingScreen();
             yield return CreateMainMenuScreen();
             yield return CreatePauseScreen();

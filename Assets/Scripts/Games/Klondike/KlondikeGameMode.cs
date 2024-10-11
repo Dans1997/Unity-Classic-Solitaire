@@ -9,6 +9,8 @@ using Interfaces;
 using Moves;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
+using UnityEngine.ResourceManagement.ResourceLocations;
 using Utils;
 using Random = System.Random;
 
@@ -34,6 +36,7 @@ namespace Games.Klondike
         private int score;
         private float gameStartTime;
         private List<Card> selectedCards;
+        private Dictionary<CardType, IResourceLocation> cardResourceLocations;
 
         public KlondikeGameMode(ITimer timer, string gameplayScreenPrefabKey)
         {
@@ -44,8 +47,17 @@ namespace Games.Klondike
             moves = new Stack<IGameMove>();
         }
         
+        ~KlondikeGameMode()
+        {
+            foreach (var resourceLocation in cardResourceLocations.Values)
+            {
+                Addressables.Release(resourceLocation);
+            }
+        }
+        
         public IEnumerator DealCards()
         {
+            yield return PreloadCardResourceLocations();
             yield return CreateGameplayScreen();
             
             gameplayScreen.SettingsButtonClicked += OnOptionsButtonClicked;
@@ -94,7 +106,8 @@ namespace Games.Klondike
             {
                 for (var cardIndex = 0; cardIndex <= columnIndex; cardIndex++)
                 {
-                    var card = new Card(shuffledDeck[0], faceDownSpriteHandle.Result);
+                    var cardType = shuffledDeck[0];
+                    var card = new Card(cardType, faceDownSpriteHandle.Result, cardResourceLocations[cardType]);
                     yield return card.LoadCardSprites();
 
                     card.CardClicked += SelectCardColumn;
@@ -107,7 +120,8 @@ namespace Games.Klondike
             var stockPileCount = shuffledDeck.Count;
             for (var i = 0; i < stockPileCount; i++)
             {
-                var card = new Card(shuffledDeck[0], faceDownSpriteHandle.Result);
+                var cardType = shuffledDeck[0];
+                var card = new Card(cardType, faceDownSpriteHandle.Result, cardResourceLocations[cardType]);
                 yield return card.LoadCardSprites();
                 
                 card.CardClicked += SelectCardColumn;
@@ -395,6 +409,20 @@ namespace Games.Klondike
                 
             GameFinished?.Invoke(gameResults);
             gameplayScreen.UIDocument.rootVisualElement.visible = false;
+        }
+        
+        private IEnumerator PreloadCardResourceLocations()
+        {
+            cardResourceLocations = new Dictionary<CardType, IResourceLocation>();
+            var handle = Addressables.LoadResourceLocationsAsync(Constants.ClassicSolitaireDeckGroupLabel, typeof(Sprite));
+            yield return handle;
+
+            if (handle.Status != AsyncOperationStatus.Succeeded) yield break;
+            foreach (var resourceLocation in handle.Result)
+            {
+                var cardType = (CardType)Enum.Parse(typeof(CardType), resourceLocation.PrimaryKey);
+                cardResourceLocations.TryAdd(cardType, resourceLocation);
+            }
         }
     }
 }

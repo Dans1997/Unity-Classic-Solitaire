@@ -3,6 +3,7 @@ using System.Collections;
 using Enums;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.ResourceLocations;
 using UnityEngine.UIElements;
 using Utils;
 
@@ -22,14 +23,16 @@ namespace Cards
         private readonly string faceDownSpriteKey;
         private readonly Sprite faceDownSprite;
         private Sprite faceUpSprite;
-        
-        public Card(CardType cardType, Sprite faceDownSprite)
+        private readonly IResourceLocation faceUpSpriteLocation;
+
+        public Card(CardType cardType, Sprite faceDownSprite, IResourceLocation faceUpSpriteLocation)
         {
             CardType = cardType;
             Rank = CardUtils.GetCardRank(cardType);
             Suit = CardUtils.GetCardSuit(cardType);
             this.faceDownSprite = faceDownSprite;
-            
+            this.faceUpSpriteLocation = faceUpSpriteLocation;
+
             cardImage = new Image();
             Add(cardImage);
 
@@ -50,18 +53,13 @@ namespace Cards
     
         public IEnumerator LoadCardSprites()
         {
-            var faceUpSpriteHandle = Addressables.LoadAssetAsync<Sprite>(CardType.ToString());
+            var faceUpSpriteHandle = Addressables.LoadAssetAsync<Sprite>(faceUpSpriteLocation);
             yield return faceUpSpriteHandle;
-            
+    
             faceUpSprite = faceUpSpriteHandle.Task.Result;
             SetCardFace(CardFace.FaceDown);
         }
-
-        public override string ToString()
-        {
-            return $"{CardType}";
-        }
-
+        
         public void SetHeightPercentage(float heightPercentage)
         {
             style.height = new StyleLength(Length.Percent(heightPercentage));
@@ -71,6 +69,11 @@ namespace Cards
         {
             if (selected) AddToClassList("selected");
             else RemoveFromClassList("selected");
+        }
+        
+        public override string ToString()
+        {
+            return $"{CardType}";
         }
     }
 }

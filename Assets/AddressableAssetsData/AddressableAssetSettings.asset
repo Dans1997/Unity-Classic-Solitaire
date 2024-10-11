@@ -15,7 +15,7 @@ MonoBehaviour:
   m_DefaultGroup: 86b211b5cf6f8f94ca07c60559bde428
   m_currentHash:
     serializedVersion: 2
-    Hash: de1e7d308ca1e34af136aa5da7f4d311
+    Hash: f961df42e0b3a6085a90d405f95722e8
   m_OptimizeCatalogSize: 0
   m_BuildRemoteCatalog: 0
   m_BundleLocalCatalog: 0
@@ -89,7 +89,7 @@ MonoBehaviour:
     m_ProfileVersion: 1
   m_LabelTable:
     m_LabelNames:
-    - default
+    - Klondike
   m_SchemaTemplates: []
   m_GroupTemplateObjects:
   - {fileID: 11400000, guid: a049a655f12a6284aaaf5d692391c51f, type: 2}

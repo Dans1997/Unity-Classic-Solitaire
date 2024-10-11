@@ -11,12 +11,10 @@ namespace Cards
         public event Action<CardColumn> CardColumnClicked;
         
         public readonly Stack<Card> CardStack;
-        
         private readonly int capacity;
         private readonly float cardHeightPercentage;
         private readonly float marginTopPercentage;
-        
-        private VisualElement columnContainer;
+        private readonly VisualElement columnContainer;
         private readonly bool setTopCardFaceUpOnRemove;
 
         public Card TopCard => CardStack.Count <= 0 ? null : CardStack.Peek();
@@ -35,7 +33,7 @@ namespace Cards
             this.columnContainer = columnContainer;
             this.setTopCardFaceUpOnRemove = setTopCardFaceUpOnRemove;
                 
-            columnContainer.RegisterCallback<ClickEvent>(evt => CardColumnClicked?.Invoke(this));
+            columnContainer.RegisterCallback<ClickEvent>(_ => CardColumnClicked?.Invoke(this));
         }
         
         public void AddCard(Card card)
