@@ -1,0 +1,11 @@
+.title {
+    width: 100%;
+    font-size: 180px;
+}
+
+.button {
+    height: 10%;
+    width: 50%;
+    font-size: 100px;
+    color: yellow;
+}

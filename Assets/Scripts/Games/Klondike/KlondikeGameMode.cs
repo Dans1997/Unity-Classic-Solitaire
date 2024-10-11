@@ -16,11 +16,14 @@ namespace Games.Klondike
 {
     public class KlondikeGameMode : IGameMode
     {
+        public event Action PauseButtonClicked;
         public event Action GameFinished;
         public GameMode GameMode => GameMode.Klondike;
         
         private readonly IGameRules gameRules;
         private readonly Stack<IGameMove> moves;
+        private readonly ITimer timer;
+        private readonly IScreen pauseScreen;
         private readonly string gameplayScreenPrefabKey;
         private IGameplayScreen gameplayScreen;
         private CardColumn stockPile;
@@ -28,25 +31,27 @@ namespace Games.Klondike
         private CardColumn[] foundationPiles;
         private CardColumn[] tableauPiles;
         private Card[] cards;
-
         private int score;
         private float gameStartTime;
         private List<Card> selectedCards;
 
-        public KlondikeGameMode(string gameplayScreenPrefabKey)
+        public KlondikeGameMode(ITimer timer, string gameplayScreenPrefabKey)
         {
+            this.timer = timer;
+            this.gameplayScreenPrefabKey = gameplayScreenPrefabKey;
+            
             gameRules = new KlondikeGameRules();
             moves = new Stack<IGameMove>();
-            this.gameplayScreenPrefabKey = gameplayScreenPrefabKey;
         }
         
+
         public IEnumerator DealCards()
         {
             yield return CreateGameplayScreen();
             
             gameplayScreen.SettingsButtonClicked += OnOptionsButtonClicked;
             gameplayScreen.ExitButtonClicked += OnExitButtonClicked;
-            gameplayScreen.PauseButtonClicked += OnPauseButtonClicked;
+            gameplayScreen.PauseButtonClicked += () => PauseButtonClicked?.Invoke();
             gameplayScreen.UndoButtonClicked += OnUndoMoveClicked;
 
             yield return gameplayScreen.Show();
@@ -123,8 +128,9 @@ namespace Games.Klondike
             if (score != 0) throw new Exception("Game's score is dirty");
             if (gameStartTime != 0) throw new Exception("Game's timeSinceStart is dirty");
             if (moves.Count != 0) throw new Exception("Game's moves are dirty");
-
-            StartTimer();
+            
+            gameStartTime = Time.time;
+            timer.StartTimer(() => gameplayScreen.SetTime(timer.ElapsedTime), 1f);
         }
 
         private void OnFoundationPileClicked(CardColumn clickedFoundationPile)
@@ -296,11 +302,6 @@ namespace Games.Klondike
             throw new System.NotImplementedException();
         }
 
-        private void OnPauseButtonClicked()
-        {
-            throw new System.NotImplementedException();
-        }
-
         private void OnUndoMoveClicked()
         {
             if (moves.Count <= 0) return;
@@ -365,18 +366,6 @@ namespace Games.Klondike
             foreach (var tableauPile in tableauPiles)
             {
                 tableauPile.CardColumnClicked -= OnTableauPileClicked;
-            }
-        }
-        
-        private async void StartTimer()
-        {
-            gameStartTime = Time.unscaledTime;
-            
-            while (true)
-            {
-                var elapsedTime = Time.unscaledTime - gameStartTime;
-                gameplayScreen.SetTime(elapsedTime);
-                await Task.Delay(1000);
             }
         }
 

@@ -1,0 +1,8 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI%20Toolkit/USSs/USS_ClassicSolitaireScreen.uss?fileID=7433441132597879392&amp;guid=24ede0bcbd1b08246998ac1aa6d62254&amp;type=3#ClassicSolitaireScreen" />
+    <Style src="project://database/Assets/UI%20Toolkit/USSs/USS_PausedScreen.uss?fileID=7433441132597879392&amp;guid=ae496c4b492da594fa683ae7b97c3d50&amp;type=3#USS_PausedScreen" />
+    <ui:VisualElement class="column background">
+        <ui:Label tabindex="-1" text="PAUSED" parse-escape-sequences="true" display-tooltip-when-elided="true" class="title" />
+        <ui:Button text="Resume" parse-escape-sequences="true" display-tooltip-when-elided="true" name="resume-button" class="button" />
+    </ui:VisualElement>
+</ui:UXML>
