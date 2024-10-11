@@ -20,9 +20,12 @@ namespace Games.Klondike
     public class KlondikeGameMode : IGameMode
     {
         public event Action PauseButtonClicked;
+        public event Action<IGameMode, IGameMove, int> MoveRegistered;
+        public event Action<IGameMode, IGameMove, int> MoveUndone;
         public event Action<IGameResults> GameFinished;
         public GameMode GameMode => GameMode.Klondike;
-        
+        public double GameStartTime => gameStartTime;
+
         private readonly IGameRules gameRules;
         private readonly Stack<IGameMove> moves;
         private readonly ITimer timer;
@@ -38,6 +41,7 @@ namespace Games.Klondike
         private float gameStartTime;
         private List<Card> selectedCards;
         private Dictionary<CardType, IResourceLocation> cardResourceLocations;
+        private IGameMode gameModeImplementation;
 
         public KlondikeGameMode(ITimer timer, string screenPrefabKey)
         {
@@ -137,7 +141,7 @@ namespace Games.Klondike
             }
         }
 
-        public void StartGame()
+        public float StartGame()
         {
             if (score != 0) throw new Exception("Game's score is dirty");
             if (gameStartTime != 0) throw new Exception("Game's timeSinceStart is dirty");
@@ -145,6 +149,7 @@ namespace Games.Klondike
             
             gameStartTime = Time.time;
             timer.StartTimer(time => gameplayScreen.SetTime(time), 1f);
+            return gameStartTime;
         }
 
         private void OnFoundationPileClicked(CardColumn clickedFoundationPile)
@@ -319,8 +324,10 @@ namespace Games.Klondike
             moves.Push(move);
             move.Execute();
             AddScore(move.Score);
-            gameplayScreen.SetMoveCount(moves.Count);
-
+            var movesCount = moves.Count;
+            gameplayScreen.SetMoveCount(movesCount);
+            MoveRegistered?.Invoke(this, move, movesCount);
+            
             if (!gameRules.IsGameEnd(stockPile, stockPileDump, tableauPiles, foundationPiles, out var gameOutcome))
             {
                 return;
@@ -332,11 +339,13 @@ namespace Games.Klondike
         private void UndoLastMove()
         {
             if (moves.Count <= 0) return;
-            
+
+            var moveNumber = moves.Count;
             var move = moves.Pop();
             move.Undo();
             AddScore(-move.Score);
             gameplayScreen.SetMoveCount(moves.Count);
+            MoveUndone?.Invoke(this, move, moveNumber);
         }
         
         private async void SelectCardColumn(Card clickedCard)

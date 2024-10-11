@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using GameAnalytics;
 using Games.Klondike;
 using Interfaces;
 using Scenes;
@@ -14,6 +15,7 @@ namespace Containers
     public class GameStateContainer : MonoBehaviour
     {
         private SceneLoader sceneLoader;
+        private IUserDataTracker dataTracker;
         private IScreen loadingScreen;
         private IScreen mainMenuScreen;
         private IScreen pauseScreen;
@@ -22,6 +24,7 @@ namespace Containers
         private void Awake()
         {
             sceneLoader = new SceneLoader(SceneManager.GetActiveScene());
+            dataTracker = new UserDataTracker();
         }
 
         private IEnumerator Start()
@@ -76,8 +79,12 @@ namespace Containers
             yield return loadingScreen.Hide();
 
             gameModeController.PauseButtonClicked += OnPauseButtonClicked;
+            gameModeController.MoveRegistered += OnMoveRegistered;
+            gameModeController.MoveUndone += OnMoveUndone;
             gameModeController.GameFinished += OnGameFinished;
-            gameModeController.StartGame();
+            
+            var gameStartTime = gameModeController.StartGame();
+            dataTracker.TrackGameStart(gameStartTime);
         }
 
         private IEnumerator UnloadSelectedGameMode(IGameResults gameResults)
@@ -118,9 +125,20 @@ namespace Containers
             Time.timeScale = 1f;
         }
 
+        private void OnMoveRegistered(IGameMode gameMode, IGameMove gameMove, int moveNumber)
+        {
+            dataTracker.TrackCardMove(gameMode, gameMove, moveNumber);
+        }
+        
+        private void OnMoveUndone(IGameMode gameMode, IGameMove gameMove, int moveNumber)
+        {
+            dataTracker.TrackUndoMove(gameMode, gameMove, moveNumber);
+        }
+
         private void OnGameFinished(IGameResults gameResults)
         {
             StartCoroutine(UnloadSelectedGameMode(gameResults));
+            dataTracker.TrackGameEnd(gameResults);
         }
         
         private void OnEndCardContinueButtonClicked()
