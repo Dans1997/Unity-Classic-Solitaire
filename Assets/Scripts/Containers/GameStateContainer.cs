@@ -64,7 +64,8 @@ namespace Containers
             yield return loadingScreen.Show();
             yield return mainMenuScreen.Hide();
             yield return sceneLoader.LoadSceneAsync(Constants.GameplaySceneKey);
-            var gameModeController = gameMode switch
+            
+            IGameMode gameModeController = gameMode switch
             {
                 GameMode.Klondike => new KlondikeGameMode(new CoroutineTimer(this), 
                     Constants.ClassicSolitaireScreenPrefabKey),
