@@ -8,7 +8,7 @@ namespace Interfaces
         bool IsPaused { get; }
         float ElapsedTime { get; }
         
-        void StartTimer(Action callback = null, float callbackInterval = 0f);
+        void StartTimer(Action<float> callback = null, float callbackInterval = 0f);
         void StopTimer();
         void PauseTimer();
         void ResumeTimer();

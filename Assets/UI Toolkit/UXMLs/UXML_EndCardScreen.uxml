@@ -1,0 +1,24 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI%20Toolkit/USSs/USS_ClassicSolitaireScreen.uss?fileID=7433441132597879392&amp;guid=24ede0bcbd1b08246998ac1aa6d62254&amp;type=3#USS_ClassicSolitaireScreen" />
+    <Style src="project://database/Assets/UI%20Toolkit/USSs/USS_EndCardScreen.uss?fileID=7433441132597879392&amp;guid=bbe37eab36aa56c4ea5522a4a99fe4d9&amp;type=3#USS_EndCardScreen" />
+    <ui:VisualElement class="column">
+        <ui:VisualElement class="modal column">
+            <ui:Label tabindex="-1" text="REsults" parse-escape-sequences="true" display-tooltip-when-elided="true" name="result-label" class="title" />
+            <ui:VisualElement style="flex-grow: 1;" />
+            <ui:VisualElement class="row" style="flex-grow: 1;">
+                <ui:Label tabindex="-1" text="Score: " parse-escape-sequences="true" display-tooltip-when-elided="true" class="analytics-label-title" />
+                <ui:Label tabindex="-1" text="0" parse-escape-sequences="true" display-tooltip-when-elided="true" name="score-label" />
+            </ui:VisualElement>
+            <ui:VisualElement class="row" style="flex-grow: 1;">
+                <ui:Label tabindex="-1" text="Time: " parse-escape-sequences="true" display-tooltip-when-elided="true" class="analytics-label-title" />
+                <ui:Label tabindex="-1" text="00:00" parse-escape-sequences="true" display-tooltip-when-elided="true" name="time-label" />
+            </ui:VisualElement>
+            <ui:VisualElement class="row" style="flex-grow: 1;">
+                <ui:Label tabindex="-1" text="Moves: " parse-escape-sequences="true" display-tooltip-when-elided="true" class="analytics-label-title" />
+                <ui:Label tabindex="-1" text="0" parse-escape-sequences="true" display-tooltip-when-elided="true" name="moves-label" />
+            </ui:VisualElement>
+            <ui:VisualElement style="flex-grow: 1;" />
+            <ui:Button text="Continue" name="continue-button" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

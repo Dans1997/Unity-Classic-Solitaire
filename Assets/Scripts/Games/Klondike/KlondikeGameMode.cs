@@ -17,7 +17,7 @@ namespace Games.Klondike
     public class KlondikeGameMode : IGameMode
     {
         public event Action PauseButtonClicked;
-        public event Action GameFinished;
+        public event Action<IGameResults> GameFinished;
         public GameMode GameMode => GameMode.Klondike;
         
         private readonly IGameRules gameRules;
@@ -44,7 +44,6 @@ namespace Games.Klondike
             moves = new Stack<IGameMove>();
         }
         
-
         public IEnumerator DealCards()
         {
             yield return CreateGameplayScreen();
@@ -130,7 +129,7 @@ namespace Games.Klondike
             if (moves.Count != 0) throw new Exception("Game's moves are dirty");
             
             gameStartTime = Time.time;
-            timer.StartTimer(() => gameplayScreen.SetTime(timer.ElapsedTime), 1f);
+            timer.StartTimer(time => gameplayScreen.SetTime(time), 1f);
         }
 
         private void OnFoundationPileClicked(CardColumn clickedFoundationPile)
@@ -299,7 +298,7 @@ namespace Games.Klondike
 
         private void OnExitButtonClicked()
         {
-            throw new System.NotImplementedException();
+            FinishGame(GameOutcome.Lose);
         }
 
         private void OnUndoMoveClicked()
@@ -324,8 +323,15 @@ namespace Games.Klondike
             move.Execute();
             AddScore(move.Score);
             gameplayScreen.SetMoveCount(moves.Count);
+
+            if (!gameRules.IsGameEnd(stockPile, stockPileDump, tableauPiles, foundationPiles, out var gameOutcome))
+            {
+                return;
+            }
+            
+            FinishGame(gameOutcome);
         }
-        
+
         private void UndoLastMove()
         {
             var move = moves.Pop();
@@ -373,6 +379,22 @@ namespace Games.Klondike
         {
             score += scoreToAdd;
             gameplayScreen.SetScore(score);
+        }
+        
+        private void FinishGame(GameOutcome gameOutcome)
+        {
+            timer.StopTimer();
+                
+            var gameResults = new KlondikeGameResults
+            (
+                gameOutcome,
+                timer.ElapsedTime,
+                score,
+                moves.Count
+            );
+                
+            GameFinished?.Invoke(gameResults);
+            gameplayScreen.UIDocument.rootVisualElement.visible = false;
         }
     }
 }

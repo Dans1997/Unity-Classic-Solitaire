@@ -3,6 +3,7 @@ using System.Collections;
 using Interfaces;
 using UnityEngine;
 using UnityEngine.UIElements;
+using Utils;
 
 namespace Screens
 {
@@ -38,12 +39,7 @@ namespace Screens
         
         public VisualElement FindColumn(string className) => rootElement.Q<VisualElement>(className);
         public void SetMoveCount(int movesCount) => movesLabel.text = movesCount.ToString();
-        public void SetTime(float time)
-        {
-            var minutes = Mathf.FloorToInt(time / 60);
-            var seconds = Mathf.FloorToInt(time % 60);
-            timeLabel.text = $"{minutes:00}:{seconds:00}";
-        }
+        public void SetTime(float time) => timeLabel.text = TimeUtils.PrintTime(time);
         public void SetScore(int score) => scoreLabel.text = score.ToString();
 
         private IEnumerator Setup()

@@ -6,7 +6,7 @@ namespace Interfaces
 {
     public interface IGameMode
     {
-        public event Action GameFinished;
+        public event Action<IGameResults> GameFinished;
         GameMode GameMode { get; }
         IEnumerator DealCards();
         void StartGame();

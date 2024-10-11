@@ -1,0 +1,22 @@
+.unity-label {
+    font-size: 100px;
+}
+
+.unity-button {
+    height: 10%;
+    width: 75%;
+    font-size: 100px;
+}
+
+.modal {
+    flex: 60%;
+    width: 75%;
+    background-color: darkgreen;
+    border-width: 10px;
+    border-color: yellow;
+    padding: 10%;
+}
+
+.title {
+    font-size: 180px;
+}

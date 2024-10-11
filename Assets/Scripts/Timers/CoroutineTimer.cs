@@ -12,18 +12,18 @@ namespace Timers
         public float ElapsedTime { get; private set; }
 
         private readonly MonoBehaviour monoBehaviour;
-        private Action callback;
+        private Action<float> callback;
         private float callbackInterval;
         private Coroutine timerCoroutine;
 
-        public CoroutineTimer(MonoBehaviour monoBehaviour, Action callback = null, float callbackInterval = 0f)
+        public CoroutineTimer(MonoBehaviour monoBehaviour, Action<float> callback = null, float callbackInterval = 0f)
         {
             this.monoBehaviour = monoBehaviour;
             this.callback = callback;
             this.callbackInterval = callbackInterval;
         }
 
-        public void StartTimer(Action callback = null, float callbackInterval = 0f)
+        public void StartTimer(Action<float> callback = null, float callbackInterval = 0f)
         {
             this.callback = callback;
             this.callbackInterval = callbackInterval;
@@ -39,7 +39,6 @@ namespace Timers
             if (timerCoroutine != null)
                 monoBehaviour.StopCoroutine(timerCoroutine);
             IsRunning = false;
-            ElapsedTime = 0;
         }
 
         public void PauseTimer()
@@ -64,10 +63,10 @@ namespace Timers
                     ElapsedTime += Time.deltaTime;
                     callbackTime += Time.deltaTime;
                 
-                    if (callback != null && callbackInterval > 0 && callbackTime >= callbackInterval)
+                    if (callbackInterval > 0 && callbackTime >= callbackInterval)
                     {
                         callbackTime = 0;
-                        callback.Invoke();
+                        callback?.Invoke(ElapsedTime);
                     }
                 }
                 yield return null;

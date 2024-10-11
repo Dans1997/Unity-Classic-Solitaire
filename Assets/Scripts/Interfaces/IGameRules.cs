@@ -1,4 +1,5 @@
 using Cards;
+using Enums;
 
 namespace Interfaces
 {
@@ -6,7 +7,9 @@ namespace Interfaces
     {
         bool CanMoveToFoundation(Card cardToMove, CardColumn foundation);
         bool CanMoveToTableau(Card cardToMove, CardColumn tableau);
-        bool IsFoundationPileComplete(CardColumn foundationPile);
-        bool CheckForWin(CardColumn[] foundationPiles);
+        bool HasValidMoves(CardColumn stockPile, CardColumn stockPileDump, CardColumn[] tableauPiles,
+            CardColumn[] foundationPiles);
+        bool IsGameEnd(CardColumn stockPile, CardColumn stockPileDump, CardColumn[] tableauPiles,
+            CardColumn[] foundationPiles, out GameOutcome gameOutcome);
     }
 }

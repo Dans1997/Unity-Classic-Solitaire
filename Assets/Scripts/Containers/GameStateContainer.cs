@@ -16,6 +16,7 @@ namespace Containers
         private IScreen loadingScreen;
         private IScreen mainMenuScreen;
         private IScreen pauseScreen;
+        private IGameResultsScreen endCardScreen;
         private SceneLoader sceneLoader;
 
         private IEnumerator Start()
@@ -23,6 +24,7 @@ namespace Containers
             yield return CreateLoadingScreen();
             yield return CreateMainMenuScreen();
             yield return CreatePauseScreen();
+            yield return CreateEndCardScreen();
             yield return loadingScreen.Hide();
             
             sceneLoader = new SceneLoader(loadingScreen);
@@ -59,6 +61,18 @@ namespace Containers
             pauseScreen = pause;
             yield return pauseScreen.Show();
             yield return pauseScreen.Hide();
+        }
+
+        private IEnumerator CreateEndCardScreen()
+        {
+            var handle = Addressables.InstantiateAsync(Constants.EndCardScreenPrefabKey);
+            yield return handle;
+            var endCard = handle.Result.GetComponent<EndCardScreen>();
+            endCard.ContinueButtonClicked += OnEndCardContinueButtonClicked;
+            
+            endCardScreen = endCard;
+            yield return endCardScreen.Show();
+            yield return endCardScreen.Hide();
         }
 
         private IEnumerator LoadGameMode(GameMode gameMode)
@@ -98,9 +112,30 @@ namespace Containers
             Time.timeScale = 1f;
         }
 
-        private void OnGameFinished()
+        private void OnGameFinished(IGameResults gameResults)
         {
-            Debug.Log("Game finished");
+            Debug.Log($"Game finished with results: {gameResults}");
+            
+            endCardScreen.SetGameResultLabel($"You {gameResults.GameOutcome}!");
+            endCardScreen.SetScoreLabel(gameResults.Score);
+            endCardScreen.SetTimeLabel(gameResults.TimeTaken);
+            endCardScreen.SetTotalMovesLabel(gameResults.TotalMoves);
+            
+            StartCoroutine(endCardScreen.Show());
+        }
+        
+        private void OnEndCardContinueButtonClicked()
+        {
+            StartCoroutine(GoBackToMainMenu());
+            return;
+            
+            IEnumerator GoBackToMainMenu()
+            {
+                yield return loadingScreen.Show();
+                yield return endCardScreen.Hide();
+                yield return mainMenuScreen.Show();
+                yield return loadingScreen.Hide();
+            }
         }
 
         private void OnOptionsButtonClicked()

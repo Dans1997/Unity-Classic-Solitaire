@@ -27,6 +27,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c655f9791987ccd4faa0d059ec4243e3
+    m_Address: EndCardScreenPrefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ced1272e7297a6847b35b201229d65c0
     m_Address: PauseScreenPrefab
     m_ReadOnly: 0
