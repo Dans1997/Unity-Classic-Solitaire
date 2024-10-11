@@ -43,4 +43,3 @@ The main classes in the project include:
 
 ## License
 This project is licensed under the MIT License. See the LICENSE file for more details.
-ee to adjust any sections to better fit your style or add more details as you see fit!
