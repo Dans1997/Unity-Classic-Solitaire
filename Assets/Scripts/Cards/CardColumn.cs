@@ -43,8 +43,8 @@ namespace Cards
         {
             if (CardStack.Count >= capacity) throw new Exception("Card stack is at capacity");
             
+            card.RegisterCallback<GeometryChangedEvent>(OnCardGeometryChanged);
             card.SetHeightPercentage(cardHeightPercentage);
-            card.style.marginTop = CardStack.Count == 0 ? 0 : Length.Percent(marginTopPercentage);
             CardStack.Push(card);
             columnContainer.Add(card);
         }
@@ -54,6 +54,7 @@ namespace Cards
             if (!ContainsCard(card)) throw new Exception($"{card} does not belong to this pile ({columnContainer.name})");
             if (TopCard != card) throw new Exception($"{card} cannot be removed as it is not at the top of the stack");
             
+            card.UnregisterCallback<GeometryChangedEvent>(OnCardGeometryChanged);
             CardStack.Pop();
             columnContainer.Remove(card);
             if (setTopCardFaceUpOnRemove) TopCard?.SetCardFace(CardFace.FaceUp);
@@ -81,6 +82,23 @@ namespace Cards
             }
 
             return result;
+        }
+        
+        private void OnCardGeometryChanged(GeometryChangedEvent evt)
+        {
+            if (evt.target is not Card card) return;
+            
+            // This is set to 1 because of the background element in the column
+            var isFirstChild = card.parent != null && card.parent.hierarchy[1] == card;
+            
+            if (PileType is PileType.StockPile)
+            {
+                card.style.marginTop = new StyleLength(isFirstChild ? 0 : -card.resolvedStyle.height);
+            }
+            else
+            {
+                card.style.marginTop = Length.Percent(isFirstChild ? 0 : marginTopPercentage);
+            }
         }
     }
 }

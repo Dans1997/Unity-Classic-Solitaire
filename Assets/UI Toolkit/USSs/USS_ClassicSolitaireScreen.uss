@@ -80,18 +80,19 @@
     width: 100%;
 }
 
-.card-column {
-    min-width: 151px;
-    flex: 1;
+.stock-pile {
     height: 100%;
-    justify-content: flex-start;
+    flex: 1;
 }
 
-.card-column-background {
-    height: 95%;
-    width: 95%;
-    position: absolute;
-    background-color: rgba(0, 0, 0, 0.5);
+.card-column {
+    height: 100%;
+    flex: 1;
+    flex-basis: 0;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    
+    margin: 0 .5% 0 .5%;
 }
 
 .card {
@@ -118,4 +119,23 @@
     height: 100%;
     font-size: 60px;
     -unity-font-definition: var(--font-def);
+}
+
+.card-column-background {
+    height: 300px;
+    width: 100%;
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.stock-pile-background {
+    background-color: rgba(72, 175, 77, 0.5);
+}
+
+.foundation-pile-background {
+    background-color: rgba(172, 175, 72, 0.5);
+}
+
+.tableau-pile-background {
+    background-color: rgba(0, 0, 0, 0.5);
 }
