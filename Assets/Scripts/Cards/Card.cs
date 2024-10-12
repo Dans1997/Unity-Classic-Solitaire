@@ -37,9 +37,9 @@ namespace Cards
             Add(cardImage);
 
             AddToClassList("card");
-            clicked += () => CardClicked?.Invoke(this);
+            clicked += OnCardClicked;
         }
-        
+
         public void SetCardFace(CardFace newFace)
         {
             if (CardFace == newFace) return;
@@ -69,6 +69,14 @@ namespace Cards
         {
             if (selected) AddToClassList("selected");
             else RemoveFromClassList("selected");
+        }
+        
+        private void OnCardClicked()
+        {
+            if (CardFace == CardFace.FaceDown) return;
+            if (pickingMode == PickingMode.Ignore) return;
+            
+            CardClicked?.Invoke(this);
         }
         
         public override string ToString()

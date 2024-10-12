@@ -155,15 +155,15 @@ namespace Games.Klondike
 
         private void OnFoundationPileClicked(CardColumn clickedFoundationPile)
         {
-            if (selectedCards is null)
-            {
-                Debug.Log($"{clickedFoundationPile} was clicked, but no card is selected");
-                return;
-            }
-
             if (!foundationPiles.Contains(clickedFoundationPile))
             {
                 Debug.LogError($"{clickedFoundationPile} is not a foundation pile");
+                return;
+            }
+            
+            if (selectedCards is null)
+            {
+                Debug.Log("Foundation pile was clicked, but no card is selected");
                 return;
             }
             
@@ -347,6 +347,8 @@ namespace Games.Klondike
             AddScore(-move.Score);
             gameplayScreen.SetMoveCount(moves.Count);
             MoveUndone?.Invoke(this, move, moveNumber);
+            
+            ResetSelection();
         }
         
         private async void SelectCardColumn(Card clickedCard)
@@ -367,13 +369,18 @@ namespace Games.Klondike
             {
                 tableauPile.CardColumnClicked += OnTableauPileClicked;
             }
+            
+            Debug.Log($"{selectedCards[0]} was selected as top card");
         }
         
         private void ResetSelection()
         {
-            foreach (var card in selectedCards)
+            if (selectedCards is not null)
             {
-                card.SetSelected(false);
+                foreach (var card in selectedCards)
+                {
+                    card.SetSelected(false);
+                }
             }
             
             selectedCards = null;
@@ -382,6 +389,8 @@ namespace Games.Klondike
             {
                 tableauPile.CardColumnClicked -= OnTableauPileClicked;
             }
+            
+            Debug.Log("Selection reset");
         }
 
         private void AddScore(int scoreToAdd)
