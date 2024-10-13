@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Enums;
-using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace Cards
@@ -35,8 +34,8 @@ namespace Cards
             this.marginTopPercentage = marginTopPercentage;
             this.columnContainer = columnContainer;
             this.setTopCardFaceUpOnRemove = setTopCardFaceUpOnRemove;
-                
-            columnContainer.RegisterCallback<ClickEvent>(_ => CardColumnClicked?.Invoke(this));
+            
+            columnContainer.RegisterCallback<PointerUpEvent>(_ => CardColumnClicked?.Invoke(this));
         }
         
         public void AddCard(Card card)
@@ -56,7 +55,6 @@ namespace Cards
             
             card.UnregisterCallback<GeometryChangedEvent>(OnCardGeometryChanged);
             CardStack.Pop();
-            columnContainer.Remove(card);
             if (setTopCardFaceUpOnRemove) TopCard?.SetCardFace(CardFace.FaceUp);
         }
         
@@ -87,11 +85,12 @@ namespace Cards
         private void OnCardGeometryChanged(GeometryChangedEvent evt)
         {
             if (evt.target is not Card card) return;
+            if (card.parent != columnContainer) return;
             
             // This is set to 1 because of the background element in the column
             var isFirstChild = card.parent != null && card.parent.hierarchy[1] == card;
             
-            if (PileType is PileType.StockPile)
+            if (PileType is PileType.StockPile or PileType.FoundationPile)
             {
                 card.style.marginTop = new StyleLength(isFirstChild ? 0 : -card.resolvedStyle.height);
             }

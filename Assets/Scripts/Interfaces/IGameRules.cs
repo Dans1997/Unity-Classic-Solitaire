@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Cards;
 using Enums;
 
@@ -7,8 +8,8 @@ namespace Interfaces
     {
         int ColumnCount { get; }
         
-        bool CanMoveToFoundation(Card cardToMove, CardColumn foundation);
-        bool CanMoveToTableau(Card cardToMove, CardColumn tableau);
+        bool CanMoveToFoundation(List<Card> cardsToMove, CardColumn foundation);
+        bool CanMoveToTableau(List<Card> cardsToMove, CardColumn tableau);
         bool HasValidMoves(CardColumn stockPile, CardColumn stockPileDump, CardColumn[] tableauPiles,
             CardColumn[] foundationPiles);
         bool IsGameEnd(CardColumn stockPile, CardColumn stockPileDump, CardColumn[] tableauPiles,

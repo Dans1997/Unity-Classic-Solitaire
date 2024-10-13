@@ -9,7 +9,7 @@ using Utils;
 
 namespace Cards
 {
-    public class Card : Button
+    public class Card : VisualElement
     {
         public event Action<Card> CardClicked;
         public event Action<CardFace, CardFace> CardFaceChanged;
@@ -33,11 +33,14 @@ namespace Cards
             this.faceDownSprite = faceDownSprite;
             this.faceUpSpriteLocation = faceUpSpriteLocation;
 
-            cardImage = new Image();
+            cardImage = new Image
+            {
+                pickingMode = PickingMode.Ignore
+            };
             Add(cardImage);
 
             AddToClassList("card");
-            clicked += OnCardClicked;
+            RegisterCallback<PointerDownEvent>(OnCardClicked);
         }
 
         public void SetCardFace(CardFace newFace)
@@ -71,7 +74,7 @@ namespace Cards
             else RemoveFromClassList("selected");
         }
         
-        private void OnCardClicked()
+        private void OnCardClicked(PointerDownEvent _)
         {
             if (CardFace == CardFace.FaceDown) return;
             if (pickingMode == PickingMode.Ignore) return;

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Cards;
 using Enums;
@@ -11,24 +12,38 @@ namespace Games.Klondike
     {
         public int ColumnCount => 7;
 
-        public bool CanMoveToFoundation(Card cardToMove, CardColumn foundation)
+        public bool CanMoveToFoundation(List<Card> cardsToMove, CardColumn foundation)
         {
-            if (cardToMove is null) throw new ArgumentNullException(nameof(cardToMove));
+            if (cardsToMove is null || cardsToMove.Count == 0) throw new ArgumentNullException(nameof(cardsToMove));
             if (foundation is null) throw new ArgumentNullException(nameof(foundation));
+            if (cardsToMove.Count > 1) return false;
+
+            var cardToMove = cardsToMove[0];
             if (foundation.IsEmpty) return cardToMove.Rank == CardRank.Ace;
-            
+
             var topCard = foundation.TopCard;
             return cardToMove.Suit == topCard.Suit && cardToMove.Rank == topCard.Rank + 1;
         }
 
-        public bool CanMoveToTableau(Card cardToMove, CardColumn tableau)
+        public bool CanMoveToTableau(List<Card> cardsToMove, CardColumn tableau)
         {
-            if (cardToMove is null) throw new ArgumentNullException(nameof(cardToMove));
+            if (cardsToMove is null || cardsToMove.Count == 0) throw new ArgumentNullException(nameof(cardsToMove));
             if (tableau is null) throw new ArgumentNullException(nameof(tableau));
-            if (tableau.IsEmpty && cardToMove.Rank == CardRank.King) return true;
-            
+
+            var firstCard = cardsToMove[0];
+            if (tableau.IsEmpty && firstCard.Rank == CardRank.King) return true;
+
             var topCard = tableau.TopCard;
-            return topCard != null && CardUtils.IsOppositeColor(cardToMove, topCard) && cardToMove.Rank == topCard.Rank + 1;
+            if (topCard == null || !CardUtils.IsOppositeColor(firstCard, topCard) || firstCard.Rank != topCard.Rank + 1) return false;
+
+            for (var i = 1; i < cardsToMove.Count; i++)
+            {
+                var previousCard = cardsToMove[i - 1];
+                var currentCard = cardsToMove[i];
+                if (previousCard.Suit == currentCard.Suit || previousCard.Rank != currentCard.Rank + 1) return false;
+            }
+
+            return true;
         }
         
         public bool IsFoundationPileComplete(CardColumn foundationPile)
@@ -45,13 +60,14 @@ namespace Games.Klondike
             if (!stockPileDump.IsEmpty)
             {
                 var stockTopCard = stockPileDump.TopCard;
+                var cardsToMove = new List<Card> { stockTopCard };
                 
-                if (foundationPiles.Any(foundation => CanMoveToFoundation(stockTopCard, foundation)))
+                if (foundationPiles.Any(foundation => CanMoveToFoundation(cardsToMove, foundation)))
                 {
                     return true;
                 }
                 
-                if (tableauPiles.Any(tableau => CanMoveToTableau(stockTopCard, tableau)))
+                if (tableauPiles.Any(tableau => CanMoveToTableau(cardsToMove, tableau)))
                 {
                     return true;
                 }
@@ -61,13 +77,14 @@ namespace Games.Klondike
             {
                 var tableauTopCard = tableau.TopCard;
                 if (tableau.IsEmpty) continue;
+                var cardsToMove = new List<Card> { tableauTopCard };
                 
-                if (foundationPiles.Any(foundation => CanMoveToFoundation(tableauTopCard, foundation)))
+                if (foundationPiles.Any(foundation => CanMoveToFoundation(cardsToMove, foundation)))
                 {
                     return true;
                 }
                 
-                if (tableauPiles.Any(otherTableau => otherTableau != tableau && CanMoveToTableau(tableauTopCard, otherTableau)))
+                if (tableauPiles.Any(otherTableau => otherTableau != tableau && CanMoveToTableau(cardsToMove, otherTableau)))
                 {
                     return true;
                 }

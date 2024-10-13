@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CardDraggers;
 using Cards;
 using Enums;
 using Interfaces;
@@ -32,6 +33,7 @@ namespace Games.Klondike
         private readonly IScreen pauseScreen;
         private readonly string screenPrefabKey;
         private IGameplayScreen gameplayScreen;
+        private ICardDragger cardDragger;
         private CardColumn stockPile;
         private CardColumn stockPileDump;
         private CardColumn[] foundationPiles;
@@ -71,6 +73,7 @@ namespace Games.Klondike
                 screen.PauseButtonClicked += () => PauseButtonClicked?.Invoke();
                 screen.UndoButtonClicked += UndoLastMove;
                 gameplayScreen = screen;
+                cardDragger = new CardDragger(gameplayScreen);
             });
 
             stockPile = new CardColumn(PileType.StockPile, gameplayScreen.FindColumn("stock-pile"), 24, 70f, -140f, false);
@@ -166,8 +169,13 @@ namespace Games.Klondike
                 Debug.Log("Foundation pile was clicked, but no card is selected");
                 return;
             }
+
+            if (TryCreateMove(clickedFoundationPile, out var move))
+            {
+                cardDragger.EndDrag();
+                RegisterMove(move);
+            }
             
-            if (TryCreateMove(clickedFoundationPile, out var move)) RegisterMove(move);
             ResetSelection();
         }
         
@@ -184,8 +192,13 @@ namespace Games.Klondike
                 Debug.LogError($"{clickedTableauPile} is not a tableau pile");
                 return;
             }
-            
-            if (TryCreateMove(clickedTableauPile, out var move)) RegisterMove(move);
+
+            if (TryCreateMove(clickedTableauPile, out var move))
+            {
+                cardDragger.EndDrag();
+                RegisterMove(move);
+            }
+
             ResetSelection();
         }
         
@@ -254,13 +267,13 @@ namespace Games.Klondike
                 return false;
             }
 
-            if (isDestinationFoundation && !gameRules.CanMoveToFoundation(selectedCards[0], destinationColumn))
+            if (isDestinationFoundation && !gameRules.CanMoveToFoundation(selectedCards, destinationColumn))
             {
                 Debug.Log($"Cannot move {selectedCards[0]} to foundation pile with top card {destinationColumn.TopCard}");
                 return false;
             }
 
-            if (isDestinationTableau && !gameRules.CanMoveToTableau(selectedCards[0], destinationColumn))
+            if (isDestinationTableau && !gameRules.CanMoveToTableau(selectedCards, destinationColumn))
             {
                 Debug.Log($"Cannot move {selectedCards[0]} to tableau pile with top card {destinationColumn.TopCard}");
                 return false;
@@ -370,6 +383,7 @@ namespace Games.Klondike
                 tableauPile.CardColumnClicked += OnTableauPileClicked;
             }
             
+            cardDragger.StartDrag(selectedCards);
             Debug.Log($"{selectedCards[0]} was selected as top card");
         }
         
@@ -390,6 +404,7 @@ namespace Games.Klondike
                 tableauPile.CardColumnClicked -= OnTableauPileClicked;
             }
             
+            cardDragger.EndDrag();
             Debug.Log("Selection reset");
         }
 
